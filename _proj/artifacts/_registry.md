@@ -12,9 +12,9 @@
 
 ## Quick Stats
 
-- **Total Reports**: 12
+- **Total Reports**: 14
 - **Active Work**: 0
-- **Completed This Week**: 12
+- **Completed This Week**: 14
 - **Last Updated**: 2026-05-16
 
 ---
@@ -32,6 +32,8 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| review-portfolio-synthesis-bl008-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut spine CERTIFIED CLEAN (4th, programmatic); offline zero-network + no-disk-write certified; 2 MED (HTML escape, offline single-guest synthesis) deferred; P0 set clear |
+| portfolio-synthesis-bl008-2026-05-16 | implementation | engineer | 2026-05-16 | Cross-visit synthesis (InferredPreference + GuestSynthesis.inferred_from): explicit 'inferred from prior stays' panel naming source property+observation; staff-note->dossier->re-synthesis OOB shim (in-memory); offline deterministic. Commit 0812575 |
 | review-voice-layer-bl005-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — offline zero-network CONFIRMED, never-cut spine CONFIRMED, TD-006 resolved; M-001 blank-submit + M-002 silent-frame + LOW select-args deferred; BL-008 clear |
 | voice-layer-bl005-2026-05-16 | implementation | engineer | 2026-05-16 | Voice layer: typed-text P0 path (classify->HTMX card update), ElevenLabs TTS Play Briefing reading current/re-planned briefing, mic STT P1 w/ guard+Text-mode fallback; offline cached m4a (TD-006). Commit 41bc223 |
 | compliance-readme-bl004-2026-05-16 | implementation | docs | 2026-05-16 | Public README (PS#1 named, dual-card model + Radha Arora validation, honest Built-Today scope, offline quickstart) + demo-playbook (3-min script, ADR-001 cut order never-cut TREQ-006, offline rehearsal). 2 user actions flagged: make repo public, capture backup assets |

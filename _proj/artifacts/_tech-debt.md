@@ -12,13 +12,13 @@
 
 ## Quick Stats
 
-- **Total Items**: 9
-- **Open**: 9
+- **Total Items**: 11
+- **Open**: 11
 - **Resolved**: 0
 - **Critical**: 0
 - **High**: 0
-- **Medium**: 2
-- **Low**: 7
+- **Medium**: 3
+- **Low**: 8
 - **Last Updated**: 2026-05-16
 
 ---
@@ -92,6 +92,16 @@ _No high-priority tech debt items._
   - **Owner**: Unassigned
   - **Estimated Effort**: BL-007
   - **Notes**: Add required attr to textarea OR return 200+inline error
+
+
+- [ ] **TD-017**: Inline HTML builders in main.py inject staff-note/synthesis text without html.escape()
+  - **Priority**: Medium
+  - **Impact**: Safe in offline/fixture demo (controlled content); live Claude mode with crafted note containing < would render raw HTML
+  - **Source**: [review-portfolio-synthesis-bl008-2026-05-16.md](review-portfolio-synthesis-bl008-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-007
+  - **Notes**: Wrap with stdlib html.escape() — ~5 lines
 
 ---
 
@@ -175,6 +185,15 @@ _No high-priority tech debt items._
   - **Owner**: Unassigned
   - **Estimated Effort**: BL-009
   - **Notes**: Align plan() call signature
+
+
+- [ ] **TD-018**: Offline synthesis always returns Ms. Chen synthesis_fixture.json for all 3 guests
+  - **Priority**: Low
+  - **Impact**: Known/accepted per ADR-002 Delta 5; rehearsed demo path is Ms.Chen; live mode synthesizes all 3 correctly
+  - **Source**: [review-portfolio-synthesis-bl008-2026-05-16.md](review-portfolio-synthesis-bl008-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: accepted
 
 ---
 

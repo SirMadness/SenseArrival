@@ -109,3 +109,17 @@
   - **Completed**: 2026-05-16
   - **Registry**: voice-layer-bl005-2026-05-16
 
+
+- [x] **BL-008**: FEAT-008 Portfolio Guest Graph & Cross-Visit Synthesis
+  - **Priority**: Critical
+  - **Agent**: engineer (fullstack)
+  - **Features**: FEAT-008
+  - **Requirements**: TREQ-020, TREQ-021, TREQ-023
+  - **UserStories**: US-011, US-012, US-014
+  - **Depends On**: BL-005
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 7. STRICTLY behind never-cut spine BL-001->002->003. TREQ-020 grounding hook lands in BL-002; this BL = full cross-visit synthesis (TREQ-021) + staff-note->dossier demo-shim (TREQ-023, reuses BL-005 voice path). Consumes BL-010 researched property content. Criteria injected from v001.02 at delegation.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: portfolio-synthesis-bl008-2026-05-16
+
