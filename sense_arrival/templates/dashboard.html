@@ -84,7 +84,7 @@
   <section id="role-cards" class="role-cards">
     <h2>Role Briefings</h2>
     {% for card in response.arrival_plan.role_cards %}
-    <div class="role-card">
+    <div class="role-card{% if card.role == 'Front Desk' %} role-card--front-desk{% endif %}">
       <div class="role-card-header">
         <h3>{{ card.role }}</h3>
         <button
@@ -96,6 +96,35 @@
         >&#9654; Play</button>
       </div>
       <p>{{ card.briefing }}</p>
+      {% if card.role == 'Front Desk' %}
+      <!-- US-001: Front Desk structured summary (arrival mode / action / do-not) -->
+      <div class="fd-summary">
+        <div class="fd-row">
+          <span class="fd-label">Arrival Mode</span>
+          <span class="fd-value">{{ response.arrival_plan.mood | title }}</span>
+        </div>
+        {% if card.priority_actions %}
+        <div class="fd-row">
+          <span class="fd-label">Actions</span>
+          <ul class="fd-actions">
+            {% for action in card.priority_actions %}
+            <li>{{ action }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        {% if card.suppressed %}
+        <div class="fd-row fd-row--suppressed">
+          <span class="fd-label">Do NOT Offer</span>
+          <ul class="fd-suppressed">
+            {% for item in card.suppressed %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
       {% if card.priority_actions %}
       <ul class="actions">
         {% for action in card.priority_actions %}
@@ -112,6 +141,7 @@
           {% endfor %}
         </ul>
       </details>
+      {% endif %}
       {% endif %}
     </div>
     {% endfor %}
@@ -138,12 +168,12 @@
   {% endif %}
 
   {% else %}
-  <!-- No response: BL-002 not yet implemented or backend not configured -->
+  <!-- No response: backend not configured or plan() unavailable -->
   <section class="placeholder">
-    <h2>Foundation Skeleton — BL-001</h2>
+    <h2>SenseArrival — Arrival Choreography Engine</h2>
     <p>
-      App is running. Full dashboard renders in <strong>BL-002</strong>.<br/>
-      Set <code>OFFLINE_MODE=true</code> or <code>BACKEND=replay</code> to see fixture data.
+      Set <code>ANTHROPIC_API_KEY</code> and start with <code>BACKEND=claude</code>,
+      or use <code>OFFLINE_MODE=true</code> for fixture replay.
     </p>
     <p>Backend: <code>{{ backend }}</code></p>
     <p>Available guests: <code>{{ dossier_slugs | join(", ") }}</code></p>

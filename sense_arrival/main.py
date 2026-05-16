@@ -71,6 +71,9 @@ async def startup() -> None:
     # Cache the canonical offline response at startup for zero-latency replay
     app.state.cached_baseline: OrchestratorResponse | None = None
     app.state.cached_replanned: OrchestratorResponse | None = None
+    # Live-mode plan storage: populated by index() and replan() for GET /diff
+    app.state.live_baseline: OrchestratorResponse | None = None
+    app.state.live_replanned: OrchestratorResponse | None = None
 
     if app.state.backend == Backend.REPLAY:
         app.state.cached_baseline = load_offline_response(replanned=False)
@@ -110,6 +113,8 @@ async def index(request: Request) -> HTMLResponse:
                 app.state.session_observations,
                 backend=backend,
             )
+            # Store for GET /diff live-mode support
+            app.state.live_baseline = response
         except NotImplementedError as exc:
             # BL-002 not yet implemented — degrade gracefully
             response = None
@@ -150,6 +155,8 @@ async def replan(request: Request) -> HTMLResponse:
                 app.state.session_observations,
                 backend=backend,
             )
+            # Store for GET /diff live-mode support
+            app.state.live_replanned = response
         except NotImplementedError as exc:
             logger.warning("replan() not implemented: %s", exc)
             response = None
@@ -179,11 +186,14 @@ async def get_diff(request: Request) -> JSONResponse:
         baseline_resp = app.state.cached_baseline or load_offline_response(replanned=False)
         replanned_resp = app.state.cached_replanned or load_offline_response(replanned=True)
     else:
-        # BL-002 will store responses in app.state; placeholder for now
-        return JSONResponse(
-            {"detail": "Diff not available — run /replan first (BL-002 scope)."},
-            status_code=202,
-        )
+        # Live mode: use stored plan responses (populated by GET / and POST /replan)
+        baseline_resp = app.state.live_baseline
+        replanned_resp = app.state.live_replanned
+        if baseline_resp is None or replanned_resp is None:
+            return JSONResponse(
+                {"detail": "Diff not available — load the dashboard and run /replan first."},
+                status_code=202,
+            )
 
     plan_diff = orchestrator.diff(
         baseline_resp.arrival_plan,

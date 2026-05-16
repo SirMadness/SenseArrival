@@ -124,6 +124,44 @@ header h1 { font-size: 2rem; color: var(--rosewood); }
 .suppressed summary { cursor: pointer; font-size: 0.85rem; color: var(--light-slate); margin-top: 0.5rem; }
 .suppressed ul { margin: 0.3rem 0 0 1.2rem; font-size: 0.85rem; color: var(--light-slate); }
 
+/* Front Desk card — structured arrival summary (US-001) */
+.role-card--front-desk {
+  border-left: 4px solid var(--rosewood);
+  background: #fdfaf6;
+}
+.fd-summary {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+.fd-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+  align-items: flex-start;
+}
+.fd-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--light-slate);
+  min-width: 110px;
+  padding-top: 0.1rem;
+}
+.fd-value {
+  font-weight: bold;
+  color: var(--rosewood);
+  font-style: italic;
+}
+.fd-actions, .fd-suppressed {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+}
+.fd-row--suppressed .fd-label { color: #b8860b; }
+.fd-row--suppressed .fd-suppressed { color: #8a6020; }
+
 /* Suppression panel */
 .suppression-panel {
   background: #fff8f0;
