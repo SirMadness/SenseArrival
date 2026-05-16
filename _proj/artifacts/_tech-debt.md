@@ -12,13 +12,13 @@
 
 ## Quick Stats
 
-- **Total Items**: 8
-- **Open**: 8
+- **Total Items**: 9
+- **Open**: 9
 - **Resolved**: 0
 - **Critical**: 0
 - **High**: 0
 - **Medium**: 0
-- **Low**: 8
+- **Low**: 9
 - **Last Updated**: 2026-05-16
 
 ---
@@ -161,6 +161,15 @@ _No high-priority tech debt items._
   - **Priority**: Low
   - **Impact**: Not demo-reachable (selector 503 in OFFLINE_MODE; fixture-controlled values); post-hackathon hardening
   - **Source**: [review-dashboard-polish-bl007-2026-05-16.md](review-dashboard-polish-bl007-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: post-hackathon
+
+
+- [ ] **TD-020**: json.JSONDecodeError not in suppressions fixture except clause; synthesis-OOB doesn't refresh suppression panel on staff-note
+  - **Priority**: Low
+  - **Impact**: Degrades correctly to []; suppressions intentionally shift only on full replan (demo-correct); author-controlled fixtures
+  - **Source**: [review-suppression-bl006-2026-05-16.md](review-suppression-bl006-2026-05-16.md)
   - **Created**: 2026-05-16
   - **Owner**: Unassigned
   - **Estimated Effort**: post-hackathon

@@ -12,8 +12,8 @@
 
 ## Quick Stats
 
-- **Total Items**: 5
-- **Ready**: 3
+- **Total Items**: 4
+- **Ready**: 2
 - **In Progress**: 1
 - **Blocked**: 1
 - **Last Updated**: 2026-05-16
@@ -38,6 +38,7 @@
   - **Details**: RS256 signing, 15-min expiry
   - **Started**: 2026-03-03
 -->
+
 
 
 
@@ -72,16 +73,6 @@
 
 
 
-
-- [ ] **BL-006**: FEAT-003 Tasteful Restraint (Suppression)
-  - **Priority**: High
-  - **Agent**: engineer (frontend)
-  - **Features**: FEAT-003
-  - **Requirements**: TREQ-007
-  - **UserStories**: US-006
-  - **Depends On**: —
-  - **Added**: 2026-05-16
-  - **Details**: Action Plan Phase 6: Originality & UI Polish. P1/cuttable to verbal pitch. Suppression panel: >=1 withheld suggestion + reason; updates after delay re-plan.
 
 
 

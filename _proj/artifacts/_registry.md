@@ -12,9 +12,9 @@
 
 ## Quick Stats
 
-- **Total Reports**: 16
+- **Total Reports**: 18
 - **Active Work**: 0
-- **Completed This Week**: 16
+- **Completed This Week**: 18
 - **Last Updated**: 2026-05-16
 
 ---
@@ -32,6 +32,8 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| review-suppression-bl006-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut 6th cert CLEAN, offline determinism confirmed, US-006 met, no regressions; project CLEAR TO LOCK; 2 LOW no-action |
+| suppression-bl006-2026-05-16 | implementation | engineer | 2026-05-16 | Tasteful-restraint suppression: Suppression model as separate OrchestratorResponse field (mirrors GuestSynthesis, never in PlanDiff); 3 baseline / 4 replanned offline fixtures for Ms.Chen; concierge-framed panel fills BL-007 slot. Commit ea409a9 |
 | review-dashboard-polish-bl007-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — 4 TD fixes confirmed resolved; never-cut spine 5th cert clean; offline zero-network certified; US-010 legibility met; 2 LOW pre-existing carry-forward |
 | dashboard-polish-bl007-2026-05-16 | implementation | engineer | 2026-05-16 | Room-legible 3-panel dashboard (260px inputs | mood+diff+suppression | role cards w/ filled Play Briefing), no horiz scroll @1280-1440, empty-state suppression; resolved TD-014/017/009/016. Commit d9bd1d4 |
 | review-portfolio-synthesis-bl008-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut spine CERTIFIED CLEAN (4th, programmatic); offline zero-network + no-disk-write certified; 2 MED (HTML escape, offline single-guest synthesis) deferred; P0 set clear |

@@ -137,3 +137,17 @@
   - **Completed**: 2026-05-16
   - **Registry**: dashboard-polish-bl007-2026-05-16
 
+
+- [x] **BL-006**: FEAT-003 Tasteful Restraint (Suppression)
+  - **Priority**: High
+  - **Agent**: engineer (frontend)
+  - **Features**: FEAT-003
+  - **Requirements**: TREQ-007
+  - **UserStories**: US-006
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 6: Originality & UI Polish. P1/cuttable to verbal pitch. Suppression panel: >=1 withheld suggestion + reason; updates after delay re-plan.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: suppression-bl006-2026-05-16
+
