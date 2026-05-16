@@ -16,6 +16,7 @@ Routes (ADR-001 + ADR-002 Delta 4):
 """
 from __future__ import annotations
 
+import html
 import json
 import logging
 import re
@@ -372,9 +373,11 @@ async def voice_transcribe(
             logger.error("STT failed: %s", exc)
             transcript = voice._hardcoded_transcript()
     else:
+        # TD-014: Return 200 with inline error so HTMX always swaps visible feedback.
+        # HTMX silently drops non-2xx responses without hx-on::response-error configured.
         return HTMLResponse(
-            '<p class="observation-error">No observation provided.</p>',
-            status_code=400,
+            '<p class="observation-error">Please enter an observation before submitting.</p>',
+            status_code=200,
         )
 
     # Step 2: classify (US-004 — ambiguous → sensible default, never crash)
@@ -430,10 +433,11 @@ def _render_dossier_observations_oob(session_observations: list[str]) -> str:
         items = ""
         for i, obs in enumerate(session_observations, 1):
             display = obs if len(obs) <= 200 else obs[:197] + "…"
+            # TD-017: escape user-supplied text before injecting into HTML
             items += (
                 f'<div class="dossier-obs-entry">'
                 f'<span class="dossier-obs-num">#{i}</span>'
-                f'<span class="dossier-obs-text">{display}</span>'
+                f'<span class="dossier-obs-text">{html.escape(display)}</span>'
                 f'</div>'
             )
         inner = items
@@ -458,26 +462,27 @@ def _render_synthesis_oob(current_response: OrchestratorResponse) -> str:
     syn = current_response.synthesis
 
     # Build inferred-from items HTML
+    # TD-017: escape all LLM/user-derived strings before HTML injection
     if syn.inferred_from:
         items_html = ""
         for item in syn.inferred_from:
             items_html += (
                 f'<div class="inferred-item">'
-                f'<div class="inferred-item-text">{item.text}</div>'
+                f'<div class="inferred-item-text">{html.escape(item.text)}</div>'
                 f'<div class="inferred-item-source">'
                 f'<span class="inferred-from-label">Inferred from prior stay:</span>'
-                f'<span class="inferred-property-tag">{item.source_property}</span>'
-                f'<span class="inferred-observation">{item.source_observation}</span>'
+                f'<span class="inferred-property-tag">{html.escape(item.source_property)}</span>'
+                f'<span class="inferred-observation">{html.escape(item.source_observation)}</span>'
                 f'</div>'
                 f'</div>'
             )
         prefs_html = f'<div class="inferred-from-list">{items_html}</div>'
     else:
-        items = "".join(f"<li>{p}</li>" for p in syn.inferred_preferences)
+        items = "".join(f"<li>{html.escape(p)}</li>" for p in syn.inferred_preferences)
         prefs_html = f'<ul class="synthesis-prefs">{items}</ul>'
 
     prov_tags = " &middot; ".join(
-        f'<span class="provenance-tag">{pid}</span>' for pid in syn.provenance_properties
+        f'<span class="provenance-tag">{html.escape(pid)}</span>' for pid in syn.provenance_properties
     )
 
     synthesis_inner = (
@@ -486,7 +491,7 @@ def _render_synthesis_oob(current_response: OrchestratorResponse) -> str:
         f'<span class="synthesis-source-badge synthesis-source-badge--updated">'
         f'Updated from new observation</span>'
         f'</div>'
-        f'<p class="synthesis-understanding">{syn.unified_understanding}</p>'
+        f'<p class="synthesis-understanding">{html.escape(syn.unified_understanding)}</p>'
         f'{prefs_html}'
         f'<p class="provenance">Prior stays at: {prov_tags}</p>'
     )
@@ -525,11 +530,12 @@ def _render_observation_feedback(
     badge_class = "obs-badge obs-badge--" + classification.replace("_", "-")
     # Truncate long transcripts for display
     display_text = transcript if len(transcript) <= 200 else transcript[:197] + "…"
+    # TD-017: escape user-supplied transcript before HTML injection
     return (
         f'<div class="observation-receipt">'
-        f'<p class="obs-transcript">&ldquo;{display_text}&rdquo;</p>'
+        f'<p class="obs-transcript">&ldquo;{html.escape(display_text)}&rdquo;</p>'
         f'<p class="obs-meta">'
-        f'<span class="{badge_class}">{role_label}</span> &nbsp;'
+        f'<span class="{badge_class}">{html.escape(role_label)}</span> &nbsp;'
         f'<span class="obs-count">Observation {obs_count} recorded</span>'
         f'</p>'
         f'</div>'
@@ -560,15 +566,16 @@ def _render_role_cards_oob(
         fd_class = " role-card--front-desk" if card.role == "Front Desk" else ""
 
         # Build priority actions HTML
+        # TD-017: escape all LLM-derived strings before HTML injection
         actions_html = ""
         if card.priority_actions:
-            items = "".join(f"<li>{a}</li>" for a in card.priority_actions)
+            items = "".join(f"<li>{html.escape(a)}</li>" for a in card.priority_actions)
             if card.role == "Front Desk":
                 actions_html = (
                     f'<div class="fd-summary">'
                     f'<div class="fd-row">'
                     f'<span class="fd-label">Arrival Mode</span>'
-                    f'<span class="fd-value">{response.arrival_plan.mood.title()}</span>'
+                    f'<span class="fd-value">{html.escape(response.arrival_plan.mood.title())}</span>'
                     f'</div>'
                     f'<div class="fd-row">'
                     f'<span class="fd-label">Actions</span>'
@@ -576,7 +583,7 @@ def _render_role_cards_oob(
                     f'</div>'
                 )
                 if card.suppressed:
-                    sup_items = "".join(f"<li>{s}</li>" for s in card.suppressed)
+                    sup_items = "".join(f"<li>{html.escape(s)}</li>" for s in card.suppressed)
                     actions_html += (
                         f'<div class="fd-row fd-row--suppressed">'
                         f'<span class="fd-label">Do NOT Offer</span>'
@@ -587,7 +594,7 @@ def _render_role_cards_oob(
             else:
                 actions_html = f'<ul class="actions">{items}</ul>'
                 if card.suppressed:
-                    sup_items = "".join(f"<li>{s}</li>" for s in card.suppressed)
+                    sup_items = "".join(f"<li>{html.escape(s)}</li>" for s in card.suppressed)
                     actions_html += (
                         f'<details class="suppressed">'
                         f'<summary>Suppressed ({len(card.suppressed)})</summary>'
@@ -599,12 +606,12 @@ def _render_role_cards_oob(
         cards_html_parts.append(
             f'<div class="role-card{fd_class}{changed_class}">'
             f'<div class="role-card-header">'
-            f'<h3>{card.role} {obs_indicator}</h3>'
+            f'<h3>{html.escape(card.role)} {obs_indicator}</h3>'
             f'<button hx-get="/voice/tts/{card_id_slug}" hx-swap="none" '
             f'class="tts-btn" onclick="playAudio(this)" title="Play briefing">'
             f'&#9654; Play</button>'
             f'</div>'
-            f'<p>{card.briefing}</p>'
+            f'<p>{html.escape(card.briefing)}</p>'
             f'{actions_html}'
             f'</div>'
         )
@@ -751,8 +758,11 @@ async def select_guest(
     try:
         response = await orchestrator.plan(
             dossier_md, property_md, provenance_mds,
+            app.state.session_observations,  # TD-016: pass session_observations (was missing)
             backend=backend,
         )
+        # TD-009: set live_baseline so a subsequent GET /diff diffs against this selection
+        app.state.live_baseline = response
     except NotImplementedError:
         response = None
 

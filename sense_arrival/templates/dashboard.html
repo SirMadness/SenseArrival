@@ -22,81 +22,279 @@
 
 <main id="dashboard-root">
 
-  <!-- Controls: Inject Delay button is the headline demo action -->
-  <section class="controls">
-    <form hx-post="/replan"
-          hx-target="#dashboard-root"
-          hx-swap="innerHTML"
-          hx-indicator="#replan-indicator">
-      <button type="submit" class="btn-primary btn-inject">
-        &#9888; Inject Delay &amp; Re-plan
-      </button>
-      <span id="replan-indicator" class="htmx-indicator replan-indicator">
-        Re-planning&#8230;
-      </span>
-    </form>
-    <a href="/diff" class="btn-secondary">View Diff (JSON)</a>
-    {% if not offline %}
-    <a href="/select" class="btn-secondary">Change Guest / Property</a>
-    {% endif %}
-  </section>
-
   {% if replanned %}
-  <!-- Delay injection status banner -->
-  <div class="delay-injected-banner">
+  <!-- Delay injection status banner — spans full width above 3-panel grid -->
+  <div class="delay-injected-banner" style="margin-bottom:0.75rem;">
     <span class="delay-injected-icon">&#10003;</span>
     Delay injected — 120-min ATC hold at JFK &middot; Revised ETA 5:30 PM &middot; Plan re-choreographed
   </div>
   {% endif %}
 
-  {% if show_selector is defined and show_selector %}
-  <!-- Guest / Property Selector (TREQ-022) -->
-  <section class="selector-panel">
-    <h2>Select Guest &amp; Property</h2>
-    <form hx-post="/select" hx-target="#dashboard-root" hx-swap="innerHTML">
-      <label>
-        Guest
-        <select name="guest_id">
-          {% for slug in dossier_slugs %}
-          <option value="{{ slug }}">{{ slug }}</option>
+  <!-- ===================================================================
+       THREE-PANEL GRID (BL-007 / TREQ-018 / US-010)
+       Panel A (left)  : inputs / triggers
+       Panel B (middle): mood banner + diff + suppression
+       Panel C (right) : role cards with Play Briefing
+       =================================================================== -->
+  <div id="three-panel-grid">
+
+    <!-- ================================================================
+         PANEL A — Inputs / Triggers
+         ================================================================ -->
+    <div class="panel-inputs">
+
+      <!-- Inject Delay — headline P0 demo action -->
+      <div class="panel-a-card">
+        <h2>Delay Event</h2>
+        <form hx-post="/replan"
+              hx-target="#dashboard-root"
+              hx-swap="innerHTML"
+              hx-indicator="#replan-indicator">
+          <button type="submit" class="btn-primary btn-inject">
+            &#9888; Inject Delay &amp; Re-plan
+          </button>
+          <div style="margin-top:0.5rem;">
+            <span id="replan-indicator" class="htmx-indicator replan-indicator">
+              Re-planning&#8230;
+            </span>
+          </div>
+        </form>
+      </div>
+
+      <!-- Staff Observation — P0 typed-text path (TREQ-011) -->
+      <section class="staff-note" id="staff-note-section">
+        <h2>Staff Observation</h2>
+        <p class="staff-note-hint">Note a preference, request, or signal — updates the relevant role card.</p>
+
+        <!-- TREQ-011 (P0): Typed-text path — always visible, always works -->
+        <form
+          hx-post="/voice/transcribe"
+          hx-target="#staff-note-result"
+          hx-swap="innerHTML"
+          hx-encoding="multipart/form-data"
+        >
+          <input type="hidden" name="source" value="text" />
+          <textarea
+            name="text_input"
+            placeholder="e.g. 'Guest asked about road cycling routes for tomorrow morning'"
+            rows="3"
+            id="obs-textarea"
+          ></textarea>
+          <div class="staff-note-actions">
+            <button type="submit" class="btn-primary obs-submit-btn">&#10003; Submit</button>
+
+            <!-- TREQ-010 (P1): Mic button — shown only if getUserMedia succeeds -->
+            <div id="mic-capture-section" style="display:none;">
+              <button type="button" id="mic-record-btn" class="btn-secondary mic-btn">
+                &#127908; Record
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Observation result / feedback -->
+        <div id="staff-note-result"></div>
+      </section>
+
+      <!-- Guest / Property Selector (TREQ-022) — shown in live mode only -->
+      {% if not offline %}
+      <div class="panel-a-card">
+        <h2>Guest / Property</h2>
+        <a href="/select" class="btn-secondary" style="font-size:0.85rem;padding:0.5rem 0.8rem;">
+          Change Guest / Property
+        </a>
+      </div>
+      {% endif %}
+
+      {% if show_selector is defined and show_selector %}
+      <!-- Guest / Property Selector form (TREQ-022) -->
+      <section class="selector-panel">
+        <h2>Select Guest &amp; Property</h2>
+        <form hx-post="/select" hx-target="#dashboard-root" hx-swap="innerHTML">
+          <label>
+            Guest
+            <select name="guest_id">
+              {% for slug in dossier_slugs %}
+              <option value="{{ slug }}">{{ slug }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>
+            Arrival Property
+            <select name="property_id">
+              {% for slug in property_slugs %}
+              <option value="{{ slug }}">{{ slug }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <button type="submit" class="btn-primary" style="margin-top:0.5rem;">Load Plan</button>
+        </form>
+      </section>
+      {% endif %}
+
+    </div><!-- /panel-inputs -->
+
+    <!-- ================================================================
+         PANEL B — Mood Banner + Diff + Suppression
+         ================================================================ -->
+    <div class="panel-signals">
+
+      {% if response %}
+
+      <!-- Mood Banner (TREQ-003) -->
+      <section id="mood-banner" class="mood-banner{% if replanned %} mood-banner--replanned{% endif %}">
+        <h2>Arrival Mood</h2>
+        <span class="mood">{{ response.arrival_plan.mood }}</span>
+        {% if replanned %}
+        <p class="mood-note">Re-choreographed for delayed arrival — Thursday evening compressed, Friday arc intact</p>
+        {% endif %}
+      </section>
+
+      <!-- NEVER-CUT DIFF PANEL (TREQ-006 / US-003) -->
+      {% set diff = plan_diff %}
+      {% if diff and diff.entries %}
+      {% include "diff_panel.html" %}
+      {% elif diff is none %}
+      <!-- Pre-replan: pending diff placeholder -->
+      <section id="diff-panel" class="diff-panel diff-panel--pending">
+        <p>Click <strong>Inject Delay &amp; Re-plan</strong> to see what changes and why.</p>
+      </section>
+      {% endif %}
+
+      <!-- Global Suppression Panel (TREQ-007) — graceful placeholder if no data yet (US-010 AC4) -->
+      {% if response.arrival_plan.suppression %}
+      <section class="suppression-panel">
+        <h2>Tasteful Restraint — Do NOT Offer</h2>
+        <ul>
+          {% for item in response.arrival_plan.suppression %}
+          <li>{{ item }}</li>
           {% endfor %}
-        </select>
-      </label>
-      <label>
-        Arrival Property
-        <select name="property_id">
-          {% for slug in property_slugs %}
-          <option value="{{ slug }}">{{ slug }}</option>
-          {% endfor %}
-        </select>
-      </label>
-      <button type="submit" class="btn-primary">Load Plan</button>
-    </form>
-  </section>
-  {% endif %}
+        </ul>
+      </section>
+      {% else %}
+      <!-- Placeholder: suppression data may be populated after delay re-plan -->
+      <section class="suppression-panel suppression-panel--placeholder">
+        <h2>Tasteful Restraint — Do NOT Offer</h2>
+        <p>Suppression signals will appear here after re-plan (or when role cards carry per-card suppressed items).</p>
+      </section>
+      {% endif %}
+
+      <!-- Guest Message (P1) -->
+      {% if response.arrival_plan.guest_message %}
+      <section class="guest-message">
+        <h2>Guest Welcome Note</h2>
+        <blockquote>{{ response.arrival_plan.guest_message }}</blockquote>
+      </section>
+      {% endif %}
+
+      {% else %}
+      <!-- No response: backend not configured or plan() unavailable -->
+      <section class="placeholder">
+        <h2>SenseArrival — Arrival Choreography Engine</h2>
+        <p>
+          Set <code>ANTHROPIC_API_KEY</code> and start with <code>BACKEND=claude</code>,
+          or use <code>OFFLINE_MODE=true</code> for fixture replay.
+        </p>
+        <p>Backend: <code>{{ backend }}</code></p>
+        <p>Available guests: <code>{{ dossier_slugs | join(", ") }}</code></p>
+        <p>Available properties: <code>{{ property_slugs | join(", ") }}</code></p>
+      </section>
+      {% endif %}
+
+    </div><!-- /panel-signals -->
+
+    <!-- ================================================================
+         PANEL C — Role Cards with Play Briefing (TREQ-002 / TREQ-009)
+         ================================================================ -->
+    <div class="panel-roles">
+
+      {% if response %}
+      <p class="panel-roles-header">Role Briefings</p>
+
+      <!-- #role-cards is the HTMX OOB swap target — keep the id here -->
+      <div id="role-cards">
+        {% for card in response.arrival_plan.role_cards %}
+        <div class="role-card{% if card.role == 'Front Desk' %} role-card--front-desk{% endif %}{% if plan_diff and card.role in plan_diff.changed_roles %} role-card--changed{% endif %}">
+          <div class="role-card-header">
+            <h3>
+              {{ card.role }}
+              {% if plan_diff and card.role in plan_diff.changed_roles %}
+              <span class="role-changed-badge">Updated</span>
+              {% endif %}
+            </h3>
+            <button
+              hx-get="/voice/tts/{{ card.role | lower | replace(' ', '-') }}"
+              hx-swap="none"
+              class="tts-btn"
+              onclick="playAudio(this)"
+              title="Play briefing"
+            >&#9654; Play</button>
+          </div>
+          <p>{{ card.briefing }}</p>
+          {% if card.role == 'Front Desk' %}
+          <!-- US-001: Front Desk structured summary -->
+          <div class="fd-summary">
+            <div class="fd-row">
+              <span class="fd-label">Arrival Mode</span>
+              <span class="fd-value">{{ response.arrival_plan.mood | title }}</span>
+            </div>
+            {% if card.priority_actions %}
+            <div class="fd-row">
+              <span class="fd-label">Actions</span>
+              <ul class="fd-actions">
+                {% for action in card.priority_actions %}
+                <li>{{ action }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            {% if card.suppressed %}
+            <div class="fd-row fd-row--suppressed">
+              <span class="fd-label">Do NOT Offer</span>
+              <ul class="fd-suppressed">
+                {% for item in card.suppressed %}
+                <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+          {% else %}
+          {% if card.priority_actions %}
+          <ul class="actions">
+            {% for action in card.priority_actions %}
+            <li>{{ action }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% if card.suppressed %}
+          <details class="suppressed">
+            <summary>Suppressed ({{ card.suppressed | length }})</summary>
+            <ul>
+              {% for item in card.suppressed %}
+              <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+          </details>
+          {% endif %}
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div><!-- /#role-cards -->
+      {% endif %}
+
+    </div><!-- /panel-roles -->
+
+  </div><!-- /#three-panel-grid -->
+
+  <!-- ====================================================================
+       FULL-WIDTH ROWS BELOW THE 3-PANEL GRID
+       Synthesis + Dossier panels span all 3 columns.
+       ==================================================================== -->
 
   {% if response %}
 
-  <!-- Mood Banner -->
-  <section id="mood-banner" class="mood-banner{% if replanned %} mood-banner--replanned{% endif %}">
-    <h2>Arrival Mood: <span class="mood">{{ response.arrival_plan.mood }}</span></h2>
-    {% if replanned %}
-    <p class="mood-note">Re-choreographed for delayed arrival — Thursday evening compressed, Friday arc intact</p>
-    {% endif %}
-  </section>
-
-  <!-- NEVER-CUT DIFF PANEL (TREQ-006 / US-003) — rendered inline after replan -->
-  {% set diff = plan_diff %}
-  {% if diff and diff.entries %}
-  {% include "diff_panel.html" %}
-  {% elif diff is none %}
-  <!-- Pre-replan: show pending diff panel with load trigger -->
-  <section id="diff-panel" class="diff-panel diff-panel--pending">
-    <p>Click <strong>Inject Delay &amp; Re-plan</strong> to see what changes and why.</p>
-  </section>
-  {% endif %}
-
-  <!-- Synthesis Panel (TREQ-021 / BL-008) — Cross-visit synthesis with "inferred from prior stays" attribution -->
+  <!-- Synthesis Panel (TREQ-021 / BL-008) — "Inferred from prior stays" -->
   <section id="synthesis-panel" class="synthesis-panel">
     <div class="synthesis-header">
       <h2>Guest Intelligence — Cross-Visit Synthesis</h2>
@@ -105,7 +303,7 @@
     <p class="synthesis-understanding">{{ response.synthesis.unified_understanding }}</p>
 
     {% if response.synthesis.inferred_from %}
-    <!-- BL-008: Structured "inferred from prior stays" panel with source attribution -->
+    <!-- BL-008: Structured "inferred from prior stays" with source attribution -->
     <div class="inferred-from-list">
       {% for item in response.synthesis.inferred_from %}
       <div class="inferred-item">
@@ -119,7 +317,7 @@
       {% endfor %}
     </div>
     {% else %}
-    <!-- Fallback: bare preference list (live LLM without inferred_from populated) -->
+    <!-- Fallback: bare preference list -->
     <ul class="synthesis-prefs">
       {% for pref in response.synthesis.inferred_preferences %}
       <li>{{ pref }}</li>
@@ -132,158 +330,18 @@
     </p>
   </section>
 
-  <!-- Dossier Panel (BL-008 / US-014 / TREQ-023) — prior stays + live staff observations -->
+  <!-- Dossier Panel (BL-008 / US-014 / TREQ-023) — live staff observations -->
   <section id="dossier-panel" class="dossier-panel">
     <div class="dossier-header">
       <h2>Guest Dossier</h2>
       <span class="dossier-live-badge">Live — in-memory</span>
     </div>
     <div id="dossier-observations-list" class="dossier-observations-list">
-      <!-- Populated on staff note submission via HTMX OOB swap -->
-      <p class="dossier-empty-note">No live observations this visit yet. Use the Staff Observation form below to add notes — they will appear here and update the arrival plan.</p>
+      <p class="dossier-empty-note">No live observations this visit yet. Use the Staff Observation form to add notes — they will appear here and update the arrival plan.</p>
     </div>
   </section>
 
-  <!-- Role Cards Grid -->
-  <section id="role-cards" class="role-cards">
-    <h2>Role Briefings</h2>
-    {% for card in response.arrival_plan.role_cards %}
-    <div class="role-card{% if card.role == 'Front Desk' %} role-card--front-desk{% endif %}{% if plan_diff and card.role in plan_diff.changed_roles %} role-card--changed{% endif %}">
-      <div class="role-card-header">
-        <h3>
-          {{ card.role }}
-          {% if plan_diff and card.role in plan_diff.changed_roles %}
-          <span class="role-changed-badge">Updated</span>
-          {% endif %}
-        </h3>
-        <button
-          hx-get="/voice/tts/{{ card.role | lower | replace(' ', '-') }}"
-          hx-swap="none"
-          class="tts-btn"
-          onclick="playAudio(this)"
-          title="Play briefing"
-        >&#9654; Play</button>
-      </div>
-      <p>{{ card.briefing }}</p>
-      {% if card.role == 'Front Desk' %}
-      <!-- US-001: Front Desk structured summary (arrival mode / action / do-not) -->
-      <div class="fd-summary">
-        <div class="fd-row">
-          <span class="fd-label">Arrival Mode</span>
-          <span class="fd-value">{{ response.arrival_plan.mood | title }}</span>
-        </div>
-        {% if card.priority_actions %}
-        <div class="fd-row">
-          <span class="fd-label">Actions</span>
-          <ul class="fd-actions">
-            {% for action in card.priority_actions %}
-            <li>{{ action }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-        {% if card.suppressed %}
-        <div class="fd-row fd-row--suppressed">
-          <span class="fd-label">Do NOT Offer</span>
-          <ul class="fd-suppressed">
-            {% for item in card.suppressed %}
-            <li>{{ item }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-      </div>
-      {% else %}
-      {% if card.priority_actions %}
-      <ul class="actions">
-        {% for action in card.priority_actions %}
-        <li>{{ action }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      {% if card.suppressed %}
-      <details class="suppressed">
-        <summary>Suppressed ({{ card.suppressed | length }})</summary>
-        <ul>
-          {% for item in card.suppressed %}
-          <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </details>
-      {% endif %}
-      {% endif %}
-    </div>
-    {% endfor %}
-  </section>
-
-  <!-- Global Suppression Panel -->
-  {% if response.arrival_plan.suppression %}
-  <section class="suppression-panel">
-    <h2>Do NOT Offer</h2>
-    <ul>
-      {% for item in response.arrival_plan.suppression %}
-      <li>{{ item }}</li>
-      {% endfor %}
-    </ul>
-  </section>
   {% endif %}
-
-  <!-- Guest Message -->
-  {% if response.arrival_plan.guest_message %}
-  <section class="guest-message">
-    <h2>Guest Welcome Note</h2>
-    <blockquote>{{ response.arrival_plan.guest_message }}</blockquote>
-  </section>
-  {% endif %}
-
-  {% else %}
-  <!-- No response: backend not configured or plan() unavailable -->
-  <section class="placeholder">
-    <h2>SenseArrival — Arrival Choreography Engine</h2>
-    <p>
-      Set <code>ANTHROPIC_API_KEY</code> and start with <code>BACKEND=claude</code>,
-      or use <code>OFFLINE_MODE=true</code> for fixture replay.
-    </p>
-    <p>Backend: <code>{{ backend }}</code></p>
-    <p>Available guests: <code>{{ dossier_slugs | join(", ") }}</code></p>
-    <p>Available properties: <code>{{ property_slugs | join(", ") }}</code></p>
-  </section>
-  {% endif %}
-
-  <!-- Staff Voice / Text Note (TREQ-011 typed-text P0 + TREQ-010 mic P1) -->
-  <section class="staff-note" id="staff-note-section">
-    <h2>Staff Observation</h2>
-    <p class="staff-note-hint">Record a guest preference, request, or note — it will be reflected on the relevant role card.</p>
-
-    <!-- TREQ-011 (P0): Typed-text path — always visible, always works -->
-    <form
-      hx-post="/voice/transcribe"
-      hx-target="#staff-note-result"
-      hx-swap="innerHTML"
-      hx-encoding="multipart/form-data"
-    >
-      <input type="hidden" name="source" value="text" />
-      <textarea
-        name="text_input"
-        placeholder="Type a staff observation, e.g. 'Guest asked about road cycling routes for tomorrow morning'"
-        rows="3"
-        id="obs-textarea"
-      ></textarea>
-      <div class="staff-note-actions">
-        <button type="submit" class="btn-primary obs-submit-btn">&#10003; Submit as text</button>
-
-        <!-- TREQ-010 (P1): Mic button — shown only if getUserMedia succeeds -->
-        <div id="mic-capture-section" style="display:none;">
-          <button type="button" id="mic-record-btn" class="btn-secondary mic-btn">
-            &#127908; Record Observation
-          </button>
-        </div>
-      </div>
-    </form>
-
-    <!-- Observation result / feedback -->
-    <div id="staff-note-result"></div>
-  </section>
 
 </main>
 
