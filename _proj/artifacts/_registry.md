@@ -12,9 +12,9 @@
 
 ## Quick Stats
 
-- **Total Reports**: 20
+- **Total Reports**: 21
 - **Active Work**: 0
-- **Completed This Week**: 20
+- **Completed This Week**: 21
 - **Last Updated**: 2026-05-16
 
 ---
@@ -32,6 +32,7 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| playbook-final-2026-05-16 | implementation | docs | 2026-05-16 | Final presenter-ready demo-playbook: 2 DQ-blocking user actions at top, smoke-verified 6-step 3:05 script, corrected cut order (suppression/synthesis/TTS BUILT; /select DO-NOT-OPEN; Tier-3 entry), Q&A |
 | final-offline-smoke-2026-05-16 | tests | code-quality | 2026-05-16 | VERDICT DEMO-READY — full rehearsed OFFLINE path verified 9/9 PASS, zero-network proven (8 code paths), <20ms responses, HTMX local, never-cut diff has no synthesis/suppression keys; verified click sequence produced; 1 LOW (generic Spa diff reason) |
 | ADR-001-amendment-live-default-2026-05-16-2026-05-16 | architecture | architect | 2026-05-16 | ADR-001 amendment: corrected demo-mode default — live Claude+ElevenLabs is primary/showcased path (TREQ-013 Tier-1), OFFLINE_MODE/replay reframed as rehearsed network fallback not default; auditable dated amendment note added, Status stays Accepted, stack/routes/cut-order untouched; consistent w/ ADR-002 Delta 5 |
 | review-suppression-bl006-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut 6th cert CLEAN, offline determinism confirmed, US-006 met, no regressions; project CLEAR TO LOCK; 2 LOW no-action |
