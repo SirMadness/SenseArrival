@@ -1,0 +1,6 @@
+[project]
+name = "toa-internal"
+version = "0.1.0"
+description = "ToA framework-internal Python dependency manifest. Not a buildable package."
+requires-python = ">=3.9"
+dependencies = []

@@ -1,0 +1,7 @@
+# requirements.txt — ToA framework-private Python dependencies
+# Kept in sync with _proj/pyproject.toml.
+# Used on --no-uv install path (python3 -m venv + pip install -r requirements.txt).
+# Add framework-level Python packages here; they will be installed into _proj/.venv/.
+#
+# NOTE: This file is framework-owned and rewritten on re-install.
+# User project dependencies belong in a separate venv (not _proj/.venv/).

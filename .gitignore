@@ -1,0 +1,20 @@
+# TOA framework install backups
+_proj/claude-backup/
+# TOA inter-agent temp files
+_proj/artifacts/tmp/
+# Agent activity logs (local state)
+.claude/logs/*
+# TOA framework-private Python environment
+_proj/.venv/
+# publish-to-git last-sync record — not for commit
+_proj/publish_to_git/.last-publish
+
+
+_proj/CLAUDE_TEMPLATE.md
+
+
+# cluade related
+.claude/
+
+# OS generated files
+.DS_Store
