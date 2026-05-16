@@ -96,18 +96,52 @@
   </section>
   {% endif %}
 
-  <!-- Synthesis Panel (TREQ-021) -->
+  <!-- Synthesis Panel (TREQ-021 / BL-008) — Cross-visit synthesis with "inferred from prior stays" attribution -->
   <section id="synthesis-panel" class="synthesis-panel">
-    <h2>Guest Intelligence — Cross-Visit Synthesis</h2>
-    <p>{{ response.synthesis.unified_understanding }}</p>
-    <ul>
+    <div class="synthesis-header">
+      <h2>Guest Intelligence — Cross-Visit Synthesis</h2>
+      <span class="synthesis-source-badge">Inferred from prior stays</span>
+    </div>
+    <p class="synthesis-understanding">{{ response.synthesis.unified_understanding }}</p>
+
+    {% if response.synthesis.inferred_from %}
+    <!-- BL-008: Structured "inferred from prior stays" panel with source attribution -->
+    <div class="inferred-from-list">
+      {% for item in response.synthesis.inferred_from %}
+      <div class="inferred-item">
+        <div class="inferred-item-text">{{ item.text }}</div>
+        <div class="inferred-item-source">
+          <span class="inferred-from-label">Inferred from prior stay:</span>
+          <span class="inferred-property-tag">{{ item.source_property }}</span>
+          <span class="inferred-observation">{{ item.source_observation }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Fallback: bare preference list (live LLM without inferred_from populated) -->
+    <ul class="synthesis-prefs">
       {% for pref in response.synthesis.inferred_preferences %}
       <li>{{ pref }}</li>
       {% endfor %}
     </ul>
+    {% endif %}
+
     <p class="provenance">
-      Sources: {{ response.synthesis.provenance_properties | join(", ") }}
+      Prior stays at: {% for pid in response.synthesis.provenance_properties %}<span class="provenance-tag">{{ pid }}</span>{% if not loop.last %} &middot; {% endif %}{% endfor %}
     </p>
+  </section>
+
+  <!-- Dossier Panel (BL-008 / US-014 / TREQ-023) — prior stays + live staff observations -->
+  <section id="dossier-panel" class="dossier-panel">
+    <div class="dossier-header">
+      <h2>Guest Dossier</h2>
+      <span class="dossier-live-badge">Live — in-memory</span>
+    </div>
+    <div id="dossier-observations-list" class="dossier-observations-list">
+      <!-- Populated on staff note submission via HTMX OOB swap -->
+      <p class="dossier-empty-note">No live observations this visit yet. Use the Staff Observation form below to add notes — they will appear here and update the arrival plan.</p>
+    </div>
   </section>
 
   <!-- Role Cards Grid -->

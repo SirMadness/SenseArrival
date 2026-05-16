@@ -10,5 +10,32 @@
   "provenance_properties": [
     "the-carlyle-new-york",
     "castiglion-del-bosco"
+  ],
+  "inferred_from": [
+    {
+      "text": "Serious road cyclist — early-morning, self-directed; surface Bluejay Bikes + Old La Honda climb",
+      "source_property": "castiglion-del-bosco",
+      "source_observation": "Rented estate bike Day 1 & Day 3; departed 6:30 AM before breakfast; asked specifically about Strade Bianche route conditions"
+    },
+    {
+      "text": "Terroir-level wine engagement — Ridge Rosé Reveal is the Sand Hill parallel to the Brunello vertical tasting",
+      "source_property": "castiglion-del-bosco",
+      "source_observation": "Joined estate Brunello vertical tasting; asked sommelier about 2016 vs 2019 harvest conditions; stayed 45 minutes past scheduled end"
+    },
+    {
+      "text": "Live performance appetite — Café Carlyle pattern predicts interest in Friday Nights at Madera",
+      "source_property": "the-carlyle-new-york",
+      "source_observation": "Requested orchestra center seats for Sondheim revival; timed dinner to post-curtain; noted preference for walking post-show"
+    },
+    {
+      "text": "Solitude and self-direction — declined guided excursion; sat alone in vineyard 90 min; never requested services unprompted",
+      "source_property": "castiglion-del-bosco",
+      "source_observation": "Declined offered private driver excursion; preferred to walk estate alone; read in vineyard for 90 minutes without requesting services"
+    },
+    {
+      "text": "In-suite working breakfast — 7:00 AM, reading-heavy (FT + WSJ + New Yorker), not on calls",
+      "source_property": "the-carlyle-new-york",
+      "source_observation": "Ordered Financial Times, WSJ, and New Yorker each morning; breakfast in-suite both days at 7:00 AM sharp"
+    }
   ]
 }

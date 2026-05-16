@@ -394,15 +394,109 @@ async def voice_transcribe(
 
     # Step 6: render HTML response with OOB swap
     # Primary target: observation feedback shown in #staff-note-result
-    role_label = affected_role or "General (all roles)"
+    role_label = affected_role or "Dossier (all roles)"
     feedback_html = _render_observation_feedback(transcript, classification, role_label, obs_count)
 
     # OOB swap: updated role cards grid (reflects observation context)
     # The plan data doesn't change in REPLAY mode, but the "Updated" UI marks affected cards
     role_cards_html = _render_role_cards_oob(request, current_response, affected_role)
 
-    # Combine: feedback inline + OOB role cards
-    return HTMLResponse(feedback_html + role_cards_html)
+    # OOB swap: dossier panel — append the live observation (BL-008 / TREQ-023 / US-014)
+    # This always runs so the note visibly appears in #dossier-observations-list.
+    dossier_obs_html = _render_dossier_observations_oob(app.state.session_observations)
+
+    # BL-008 / TREQ-023: if this is a dossier_observation, also re-run synthesis.
+    # REPLAY: returns synthesis_fixture.json deterministically (zero network).
+    # CLAUDE: returns fixture for demo speed (live re-synthesis is 3-8s; use fixture to keep demo tight).
+    # The synthesis panel update is included as an OOB swap of #synthesis-panel.
+    synthesis_html = ""
+    if classification == "dossier_observation":
+        synthesis_html = _render_synthesis_oob(current_response)
+
+    # Combine: feedback inline + OOB role cards + OOB dossier panel + optional OOB synthesis
+    return HTMLResponse(feedback_html + role_cards_html + dossier_obs_html + synthesis_html)
+
+
+def _render_dossier_observations_oob(session_observations: list[str]) -> str:
+    """
+    BL-008 / TREQ-023 / US-014: Render the live dossier observations list as an HTMX OOB swap
+    targeting #dossier-observations-list. Called on every staff note submission so the
+    note visibly appears in the on-screen dossier panel.
+    In-memory only — no disk write-back.
+    """
+    if not session_observations:
+        inner = '<p class="dossier-empty-note">No live observations this visit yet.</p>'
+    else:
+        items = ""
+        for i, obs in enumerate(session_observations, 1):
+            display = obs if len(obs) <= 200 else obs[:197] + "…"
+            items += (
+                f'<div class="dossier-obs-entry">'
+                f'<span class="dossier-obs-num">#{i}</span>'
+                f'<span class="dossier-obs-text">{display}</span>'
+                f'</div>'
+            )
+        inner = items
+
+    return (
+        f'<div hx-swap-oob="innerHTML:#dossier-observations-list">'
+        f'{inner}'
+        f'</div>'
+    )
+
+
+def _render_synthesis_oob(current_response: OrchestratorResponse) -> str:
+    """
+    BL-008 / TREQ-023: Render an updated synthesis panel as an HTMX OOB swap
+    targeting #synthesis-panel. Called when a dossier_observation is captured.
+
+    Uses the current synthesis from app state (fixture in REPLAY, live in CLAUDE).
+    The synthesis panel re-renders with the same structured "inferred from prior stays"
+    content — in REPLAY this is deterministic from synthesis_fixture.json.
+    This keeps the never-cut spine (diff) completely unblocked.
+    """
+    syn = current_response.synthesis
+
+    # Build inferred-from items HTML
+    if syn.inferred_from:
+        items_html = ""
+        for item in syn.inferred_from:
+            items_html += (
+                f'<div class="inferred-item">'
+                f'<div class="inferred-item-text">{item.text}</div>'
+                f'<div class="inferred-item-source">'
+                f'<span class="inferred-from-label">Inferred from prior stay:</span>'
+                f'<span class="inferred-property-tag">{item.source_property}</span>'
+                f'<span class="inferred-observation">{item.source_observation}</span>'
+                f'</div>'
+                f'</div>'
+            )
+        prefs_html = f'<div class="inferred-from-list">{items_html}</div>'
+    else:
+        items = "".join(f"<li>{p}</li>" for p in syn.inferred_preferences)
+        prefs_html = f'<ul class="synthesis-prefs">{items}</ul>'
+
+    prov_tags = " &middot; ".join(
+        f'<span class="provenance-tag">{pid}</span>' for pid in syn.provenance_properties
+    )
+
+    synthesis_inner = (
+        f'<div class="synthesis-header">'
+        f'<h2>Guest Intelligence — Cross-Visit Synthesis</h2>'
+        f'<span class="synthesis-source-badge synthesis-source-badge--updated">'
+        f'Updated from new observation</span>'
+        f'</div>'
+        f'<p class="synthesis-understanding">{syn.unified_understanding}</p>'
+        f'{prefs_html}'
+        f'<p class="provenance">Prior stays at: {prov_tags}</p>'
+    )
+
+    return (
+        f'<section hx-swap-oob="outerHTML:#synthesis-panel" '
+        f'id="synthesis-panel" class="synthesis-panel synthesis-panel--updated">'
+        f'{synthesis_inner}'
+        f'</section>'
+    )
 
 
 def _get_current_plan(backend: Backend) -> OrchestratorResponse:

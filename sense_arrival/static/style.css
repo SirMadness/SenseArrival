@@ -80,7 +80,7 @@ header h1 { font-size: 2rem; color: var(--rosewood); }
 }
 .mood { text-transform: capitalize; font-style: italic; }
 
-/* Synthesis panel */
+/* Synthesis panel — BL-008 deepened */
 .synthesis-panel {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -88,9 +88,177 @@ header h1 { font-size: 2rem; color: var(--rosewood); }
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
-.synthesis-panel h2 { font-size: 1rem; color: var(--light-slate); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.synthesis-panel ul { margin: 0.5rem 0 0.5rem 1.2rem; }
-.provenance { font-size: 0.8rem; color: var(--light-slate); margin-top: 0.5rem; }
+.synthesis-panel--updated {
+  border-left: 4px solid #2a6e5c;
+  background: #f6fdfb;
+}
+.synthesis-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.synthesis-panel h2 {
+  font-size: 1rem;
+  color: var(--light-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+/* "Inferred from prior stays" badge in the synthesis panel header */
+.synthesis-source-badge {
+  font-size: 0.68rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: #2a6e5c;
+  color: white;
+  padding: 0.15rem 0.55rem;
+  border-radius: 3px;
+}
+.synthesis-source-badge--updated {
+  background: #1a4a2e;
+}
+.synthesis-understanding {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+  color: var(--slate);
+}
+.synthesis-prefs { margin: 0.5rem 0 0.5rem 1.2rem; }
+
+/* BL-008: Structured "inferred from prior stays" list */
+.inferred-from-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.inferred-item {
+  border-left: 3px solid #2a6e5c;
+  padding-left: 0.85rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+.inferred-item-text {
+  font-size: 0.92rem;
+  font-weight: bold;
+  color: var(--slate);
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+.inferred-item-source {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: baseline;
+  font-size: 0.78rem;
+}
+.inferred-from-label {
+  color: var(--light-slate);
+  font-style: italic;
+}
+.inferred-property-tag {
+  background: #e8f0ec;
+  color: #1a4a2e;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.inferred-observation {
+  color: var(--light-slate);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.provenance {
+  font-size: 0.8rem;
+  color: var(--light-slate);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.provenance-tag {
+  background: #f0f0f0;
+  color: var(--slate);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* BL-008: Dossier panel — live observations from this visit (TREQ-023 / US-014) */
+.dossier-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid #5d7a8a;
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.dossier-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.dossier-header h2 {
+  font-size: 1rem;
+  color: var(--light-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+.dossier-live-badge {
+  font-size: 0.65rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: #5d7a8a;
+  color: white;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+}
+.dossier-empty-note {
+  font-size: 0.82rem;
+  color: var(--light-slate);
+  font-style: italic;
+}
+.dossier-observations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.dossier-obs-entry {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  background: #f4f8fc;
+  border: 1px solid #c8dce8;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+}
+.dossier-obs-num {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--light-slate);
+  white-space: nowrap;
+  padding-top: 0.05rem;
+  min-width: 22px;
+}
+.dossier-obs-text {
+  font-size: 0.875rem;
+  color: var(--slate);
+  line-height: 1.45;
+}
 
 /* Role cards grid */
 .role-cards h2 { margin-bottom: 1rem; }

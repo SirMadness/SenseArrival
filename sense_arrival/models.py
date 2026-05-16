@@ -43,14 +43,28 @@ class PropertyCard(BaseModel):
     signature_anchors: list[str]    # 3–6 specific named anchors for prompt grounding
 
 
+class InferredPreference(BaseModel):
+    """
+    A single inferred guest preference with attribution to the source property.
+    Used by the synthesis panel to render "inferred from prior stays" elements.
+    BL-008: deepened from bare string to structured attribution.
+    """
+    text: str                       # the preference as a displayable string
+    source_property: str            # property_id that contributed the observation
+    source_observation: str         # brief summary of the staff observation that grounded this
+
+
 class GuestSynthesis(BaseModel):
     """
     Cross-visit synthesis produced alongside ArrivalPlan.
     MUST NOT participate in PlanDiff — it is UI context only.
+    BL-008: deepened with structured inferred_from attribution.
     """
     unified_understanding: str          # 2–4 sentence prose: cross-visit inference
-    inferred_preferences: list[str]     # bullet list surfaced in UI
+    inferred_preferences: list[str]     # bare bullet list (backward compat / live LLM output)
     provenance_properties: list[str]    # property_id list that contributed observations
+    # BL-008 addition: structured preferences with provenance attribution for "inferred from" UI
+    inferred_from: list[InferredPreference] = []  # empty = fall back to inferred_preferences
 
 
 # ---------------------------------------------------------------------------
