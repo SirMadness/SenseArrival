@@ -227,10 +227,16 @@ async def get_diff(request: Request) -> JSONResponse:
                 status_code=202,
             )
 
-    plan_diff = orchestrator.diff(
-        baseline_resp.arrival_plan,
-        replanned_resp.arrival_plan,
-    )
+    try:
+        plan_diff = orchestrator.diff(
+            baseline_resp.arrival_plan,
+            replanned_resp.arrival_plan,
+        )
+    except Exception as exc:
+        return JSONResponse(
+            {"error": "Diff computation failed", "detail": str(exc)},
+            status_code=500,
+        )
     return JSONResponse(plan_diff.model_dump())
 
 
@@ -260,10 +266,18 @@ async def get_diff_panel(request: Request) -> HTMLResponse:
                 status_code=200,
             )
 
-    plan_diff = orchestrator.diff(
-        baseline_resp.arrival_plan,
-        replanned_resp.arrival_plan,
-    )
+    try:
+        plan_diff = orchestrator.diff(
+            baseline_resp.arrival_plan,
+            replanned_resp.arrival_plan,
+        )
+    except Exception as exc:
+        return HTMLResponse(
+            f'<div class="diff-panel diff-panel--error">'
+            f'<p><strong>Diff unavailable:</strong> {exc}</p>'
+            f'</div>',
+            status_code=200,
+        )
     return templates.TemplateResponse(request, "diff_panel.html", {"diff": plan_diff})
 
 
@@ -360,6 +374,8 @@ async def offline_info(request: Request) -> HTMLResponse:
         "offline": True,
         "dossier_slugs": list_dossier_slugs(),
         "property_slugs": list_property_slugs(),
+        "plan_diff": None,
+        "replanned": False,
     })
 
 
@@ -422,4 +438,6 @@ async def select_guest(
         "offline": False,
         "dossier_slugs": list_dossier_slugs(),
         "property_slugs": list_property_slugs(),
+        "plan_diff": None,
+        "replanned": False,
     })
