@@ -1,0 +1,92 @@
+{
+  "mood": "restorative",
+  "role_cards": [
+    {
+      "role": "Front Desk",
+      "briefing": "Ms. Chen's arrival is delayed by approximately 90 minutes due to a flight connection delay at JFK. Revised arrival is now 5:30–6:00 PM Thursday. Adjust the welcome timing; ensure the room is still ready and holds. Do not call or message her during the delay — she knows. Have everything ready silently.",
+      "priority_actions": [
+        "Confirm garden-view King suite held and ready for 5:30 PM arrival",
+        "Notify Asaya Spa that the 4 PM hold is released; Thursday spa unlikely now",
+        "Have still water and light fruit plate timed for 6 PM room readiness",
+        "Note Friday morning cycling intent is unchanged — Bluejay Bikes still on"
+      ],
+      "suppressed": [
+        "Group tours or curated excursions",
+        "Flamingo Estate Tea",
+        "Any arrival activity push — she is arriving tired and later than planned"
+      ]
+    },
+    {
+      "role": "Concierge",
+      "briefing": "Delay does not affect Friday morning cycling plan. Bluejay Bikes is still confirmed for 6:30–6:45 AM Friday. Thursday evening is now very short — Ridge Rosé Reveal can be offered but keep it brief and low-key. She may simply want dinner and sleep.",
+      "priority_actions": [
+        "Bluejay Bikes Friday 6:30 AM — confirm unchanged",
+        "Route card for Old La Honda and Portola Valley loop — ready at check-in",
+        "Offer Ridge Rosé Reveal as a 45-minute quiet option after check-in, not a full evening",
+        "Have a quiet Madera table available for late dinner around 7:30 PM"
+      ],
+      "suppressed": [
+        "Friday Nights at Madera (Thursday arrival is now too late to suggest for this evening)",
+        "Group wine tour",
+        "Anything requiring more than 60 minutes of energy on Thursday evening"
+      ]
+    },
+    {
+      "role": "Spa",
+      "briefing": "Thursday 4 PM hold is released due to the delay. Asaya Thursday is off the table. Brief the team: if Ms. Chen asks about spa access on arrival, offer the garden walk-in only — no booked treatment tonight. Friday post-ride slot may be relevant; hold a 9:30 AM option.",
+      "priority_actions": [
+        "Release Thursday 4 PM hold",
+        "Hold a Friday 9:30 AM recovery treatment slot post-cycling",
+        "Outdoor garden available Thursday evening if she wants quiet air"
+      ],
+      "suppressed": [
+        "Any Thursday booked spa treatment",
+        "Social spa packages"
+      ]
+    },
+    {
+      "role": "Dining",
+      "briefing": "Revised dinner timing: hold a quiet Madera garden table for 7:30 PM Thursday. In-suite breakfast Friday 7:00 AM unchanged. Ridge Rosé Reveal available Thursday evening but at low intensity — 45 minutes maximum, no extended tasting format given the late arrival.",
+      "priority_actions": [
+        "Madera garden table held for 7:30 PM Thursday",
+        "In-suite breakfast Friday 7:00 AM (FT, WSJ, New Yorker) — unchanged",
+        "Ridge Rosé Reveal: brief the wine team for a 45-minute quiet pour, not the full event format"
+      ],
+      "suppressed": [
+        "Flamingo Estate Tea",
+        "Extended wine tasting on Thursday evening"
+      ]
+    },
+    {
+      "role": "Housekeeping",
+      "briefing": "Turndown adjusted to 8:00 PM given later arrival. Friday morning in-suite breakfast unchanged at 7:00 AM. No interruptions after 9 PM.",
+      "priority_actions": [
+        "Turndown by 8:00 PM Thursday (adjusted from earlier window)",
+        "In-suite breakfast Friday 7:00 AM — unchanged",
+        "No hallway noise or interruptions Thursday night"
+      ],
+      "suppressed": []
+    },
+    {
+      "role": "Guest Experience",
+      "briefing": "Delay-adjusted plan: the cycling and wine thread remain intact; the arrival is shorter than ideal but the Friday arc is preserved. The key adjustment is Thursday evening compression — everything is dialed back to quiet landing mode. Do not over-program. The handwritten note in the room should acknowledge the long travel day without referencing the delay specifically.",
+      "priority_actions": [
+        "Handwritten note in room — acknowledge travel, don't reference delay",
+        "Bluejay Bikes Friday 6:30 AM confirmed — this is the day's anchor",
+        "Ridge Rosé Reveal available tonight if she wants it; no push"
+      ],
+      "suppressed": [
+        "Any reference to the delay in person",
+        "Group activity suggestions",
+        "Activity push on Thursday evening"
+      ]
+    }
+  ],
+  "suppression": [
+    "Any Thursday evening programming beyond quiet dinner and optional 45-minute Ridge Rosé Reveal",
+    "Flamingo Estate Afternoon Tea",
+    "Group tours or guided excursions",
+    "References to the flight delay in direct guest interaction"
+  ],
+  "guest_message": "Welcome to Rosewood, Ms. Chen — we hope the journey wasn't too rough. Your garden suite is ready. A quiet table at Madera is held for 7:30 if you'd like dinner, and the Ridge Rosé is available whenever you're settled. Tomorrow morning: Bluejay Bikes is confirmed for 6:30 AM and your route card is at the desk. Rest well."
+}

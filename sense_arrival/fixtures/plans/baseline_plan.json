@@ -1,0 +1,91 @@
+{
+  "mood": "restorative",
+  "role_cards": [
+    {
+      "role": "Front Desk",
+      "briefing": "Ms. Chen is arriving Thursday afternoon after a red-eye from New York. She is a quiet, self-directed guest — no fanfare on arrival. Confirm the garden-view King suite is ready and offer a direct, unhurried check-in. Do not pitch activities at the desk; she will ask if she wants them.",
+      "priority_actions": [
+        "Confirm garden-view King suite is ready and pre-cooled",
+        "Have still water and a light fruit plate in the room on arrival",
+        "Offer a quiet check-in — no up-sell at the desk",
+        "Note that she may want an early wake-up for Friday morning cycling"
+      ],
+      "suppressed": [
+        "Group tours or curated excursions",
+        "Flamingo Estate Tea (social, wrong arrival mood)",
+        "Stanford campus suggestion at check-in (work-adjacent, not decompression)"
+      ]
+    },
+    {
+      "role": "Concierge",
+      "briefing": "Ms. Chen is a serious road cyclist with a Tuscany pedigree — she rode Val d'Orcia Strade Bianche before breakfast. For Friday morning, proactively arrange Bluejay Bikes access and surface the Old La Honda climb or Portola Valley loop. She will not ask twice; have the logistics ready to confirm when she inquires.",
+      "priority_actions": [
+        "Pre-book Bluejay Bikes for Friday 6:30–6:45 AM departure",
+        "Prepare a printed route card for Old La Honda Road and the Portola Valley loop",
+        "Surface Ridge Rosé Reveal for Thursday evening (quiet, wine-focused, no group)",
+        "Note Friday Nights at Madera as a back-pocket option if she shows energy on Friday"
+      ],
+      "suppressed": [
+        "Private driver excursions",
+        "Group wine tours",
+        "Friday Nights at Madera on Thursday (she just arrived)"
+      ]
+    },
+    {
+      "role": "Spa",
+      "briefing": "Ms. Chen is arriving off a red-eye. Asaya Spa is the appropriate default offer for Thursday afternoon — specifically the outdoor relaxation garden and a recovery treatment. Do not pitch social spa packages. She may want quiet time in the garden without a treatment booked.",
+      "priority_actions": [
+        "Hold a Thursday 4 PM Asaya appointment block (do not confirm until she accepts)",
+        "Offer outdoor garden access with no treatment required",
+        "Prepare a recovery-focused treatment recommendation — not a social package"
+      ],
+      "suppressed": [
+        "Couples or group spa packages",
+        "High-stimulation treatments on arrival day"
+      ]
+    },
+    {
+      "role": "Dining",
+      "briefing": "Ms. Chen takes breakfast in-suite — prompt, reading-focused, not interrupted by upsell. For Thursday evening, Ridge Rosé Reveal is the preferred wine experience. Friday dinner: no specific pattern yet; offer Madera chef's-table option as a quiet, substantive choice.",
+      "priority_actions": [
+        "Set in-suite breakfast for Friday 7:00 AM (FT, WSJ, and New Yorker alongside)",
+        "Brief wine team on Ridge Rosé Reveal for Thursday evening — guest has Brunello-level terroir knowledge",
+        "Reserve a quiet Madera garden table for Thursday dinner if she wants to dine in"
+      ],
+      "suppressed": [
+        "Flamingo Estate Tea (social grouping, wrong for this guest)",
+        "Loud or celebratory table positioning"
+      ]
+    },
+    {
+      "role": "Housekeeping",
+      "briefing": "No interruptions Thursday evening after 9 PM. In-suite breakfast Friday 7:00 AM — quiet knock, leave tray, do not engage unless addressed. Guest may be reading or on a call.",
+      "priority_actions": [
+        "Turndown service before 8:30 PM on Thursday",
+        "In-suite breakfast delivery Friday 7:00 AM — no knock-and-enter",
+        "Ensure the room is quiet: no hallway noise Thursday night"
+      ],
+      "suppressed": []
+    },
+    {
+      "role": "Guest Experience",
+      "briefing": "Ms. Chen is a known Rosewood guest (prior stays at The Carlyle and Castiglion del Bosco). The synthesis team has cross-referenced her dossier. This is a decompression arrival — the 'they just knew' moment is getting the Bluejay Bikes arranged and the Ridge Rosé Reveal surfaced without her having to ask for either.",
+      "priority_actions": [
+        "Ensure Concierge has Bluejay Bikes confirmed before 3 PM Thursday",
+        "Have Ridge Rosé Reveal available Thursday evening — no reservation required, walk-up welcome",
+        "Leave a handwritten note in the room acknowledging her return to Rosewood"
+      ],
+      "suppressed": [
+        "Any reference to her prior stays in spoken conversation (note it, don't announce it)",
+        "Group activity suggestions"
+      ]
+    }
+  ],
+  "suppression": [
+    "Group tours or guided excursions of any kind",
+    "Flamingo Estate Afternoon Tea (social energy — wrong for this arrival)",
+    "Stanford campus tour (work-adjacent, counterproductive for decompression)",
+    "Any upsell at check-in or during arrival interaction"
+  ],
+  "guest_message": "Welcome back to Rosewood, Ms. Chen. Your garden suite is ready and the evening is yours. We have a Bluejay Bikes reservation held for tomorrow morning and a Ridge Rosé Reveal available whenever you are ready — no rush, no reservation needed. The Asaya garden is open. Let us know if there is anything else."
+}

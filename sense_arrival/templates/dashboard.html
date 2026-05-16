@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SenseArrival — Arrival Choreography</title>
+  <script src="https://unpkg.com/htmx.org@1.9.12" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+{% if offline %}
+<div class="offline-banner">
+  OFFLINE MODE — fixture replay active (ms-chen @ rosewood-sand-hill)
+</div>
+{% endif %}
+
+<header>
+  <h1>SenseArrival</h1>
+  <p class="subtitle">Arrival Choreography Engine — {{ backend }} backend</p>
+</header>
+
+<main id="dashboard-root">
+
+  <!-- Backend toggle form -->
+  <section class="controls">
+    <form hx-post="/replan" hx-target="#dashboard-root" hx-swap="innerHTML">
+      <button type="submit" class="btn-primary">Inject Delay &amp; Re-plan</button>
+    </form>
+    <a href="/diff" class="btn-secondary">View Diff (JSON)</a>
+    {% if not offline %}
+    <a href="/select" class="btn-secondary">Change Guest / Property</a>
+    {% endif %}
+  </section>
+
+  {% if show_selector is defined and show_selector %}
+  <!-- Guest / Property Selector (TREQ-022) -->
+  <section class="selector-panel">
+    <h2>Select Guest &amp; Property</h2>
+    <form hx-post="/select" hx-target="#dashboard-root" hx-swap="innerHTML">
+      <label>
+        Guest
+        <select name="guest_id">
+          {% for slug in dossier_slugs %}
+          <option value="{{ slug }}">{{ slug }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Arrival Property
+        <select name="property_id">
+          {% for slug in property_slugs %}
+          <option value="{{ slug }}">{{ slug }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit" class="btn-primary">Load Plan</button>
+    </form>
+  </section>
+  {% endif %}
+
+  {% if response %}
+
+  <!-- Mood Banner -->
+  <section class="mood-banner">
+    <h2>Arrival Mood: <span class="mood">{{ response.arrival_plan.mood }}</span></h2>
+  </section>
+
+  <!-- Synthesis Panel (TREQ-021) -->
+  <section id="synthesis-panel" class="synthesis-panel">
+    <h2>Guest Intelligence — Cross-Visit Synthesis</h2>
+    <p>{{ response.synthesis.unified_understanding }}</p>
+    <ul>
+      {% for pref in response.synthesis.inferred_preferences %}
+      <li>{{ pref }}</li>
+      {% endfor %}
+    </ul>
+    <p class="provenance">
+      Sources: {{ response.synthesis.provenance_properties | join(", ") }}
+    </p>
+  </section>
+
+  <!-- Role Cards Grid -->
+  <section id="role-cards" class="role-cards">
+    <h2>Role Briefings</h2>
+    {% for card in response.arrival_plan.role_cards %}
+    <div class="role-card">
+      <div class="role-card-header">
+        <h3>{{ card.role }}</h3>
+        <button
+          hx-get="/voice/tts/{{ card.role | lower | replace(' ', '-') }}"
+          hx-swap="none"
+          class="tts-btn"
+          onclick="playAudio(this)"
+          title="Play briefing"
+        >&#9654; Play</button>
+      </div>
+      <p>{{ card.briefing }}</p>
+      {% if card.priority_actions %}
+      <ul class="actions">
+        {% for action in card.priority_actions %}
+        <li>{{ action }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if card.suppressed %}
+      <details class="suppressed">
+        <summary>Suppressed ({{ card.suppressed | length }})</summary>
+        <ul>
+          {% for item in card.suppressed %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Global Suppression Panel -->
+  {% if response.arrival_plan.suppression %}
+  <section class="suppression-panel">
+    <h2>Do NOT Offer</h2>
+    <ul>
+      {% for item in response.arrival_plan.suppression %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <!-- Guest Message -->
+  {% if response.arrival_plan.guest_message %}
+  <section class="guest-message">
+    <h2>Guest Welcome Note</h2>
+    <blockquote>{{ response.arrival_plan.guest_message }}</blockquote>
+  </section>
+  {% endif %}
+
+  {% else %}
+  <!-- No response: BL-002 not yet implemented or backend not configured -->
+  <section class="placeholder">
+    <h2>Foundation Skeleton — BL-001</h2>
+    <p>
+      App is running. Full dashboard renders in <strong>BL-002</strong>.<br/>
+      Set <code>OFFLINE_MODE=true</code> or <code>BACKEND=replay</code> to see fixture data.
+    </p>
+    <p>Backend: <code>{{ backend }}</code></p>
+    <p>Available guests: <code>{{ dossier_slugs | join(", ") }}</code></p>
+    <p>Available properties: <code>{{ property_slugs | join(", ") }}</code></p>
+  </section>
+  {% endif %}
+
+  <!-- Staff Voice / Text Note (TREQ-023) -->
+  <section class="staff-note">
+    <h2>Staff Observation</h2>
+    <form
+      hx-post="/voice/transcribe"
+      hx-target="#staff-note-result"
+      hx-swap="innerHTML"
+      hx-encoding="multipart/form-data"
+    >
+      <input type="hidden" name="source" value="text" />
+      <textarea name="text_input" placeholder="Type a staff observation…" rows="2"></textarea>
+      <button type="submit" class="btn-secondary">Submit Observation</button>
+    </form>
+    <div id="staff-note-result"></div>
+  </section>
+
+</main>
+
+<script src="/static/app.js"></script>
+
+</body>
+</html>

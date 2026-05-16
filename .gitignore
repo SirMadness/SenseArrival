@@ -18,3 +18,17 @@ _proj/CLAUDE_TEMPLATE.md
 
 # OS generated files
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Environment secrets
+.env
+
+# Audio cache (generated)
+sense_arrival/static/audio/*.mp3
