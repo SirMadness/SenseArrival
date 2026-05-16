@@ -25,3 +25,73 @@
   - **Completed**: 2026-03-02
   - **Registry**: arch-database-schema-20260302
 -->
+
+- [x] **BL-010**: Rosewood per-property destination-culture research (3 properties + 3 dossiers)
+  - **Priority**: High
+  - **Agent**: analyst (research)
+  - **Features**: FEAT-008
+  - **Requirements**: TREQ-020
+  - **UserStories**: US-008, US-011
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: PARALLEL, off critical path — delegate early. Research real Rosewood properties' local culture/activities (1 deep arrival property + 2 provenance) -> Markdown property 'sense of place' cards + 3 guest dossiers w/ cross-property prior-stay staff observations. Build-time only; synthetic/rights-cleared; NO live demo APIs. Feeds BL-008. Output: Research -> _proj/artifacts/reports/analysis/.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: rosewood-property-dossier-research-2026-05-16
+
+
+- [x] **BL-001**: FEAT-005 Resilient Runtime & Stack
+  - **Priority**: Critical
+  - **Agent**: engineer (backend)
+  - **Features**: FEAT-005
+  - **Requirements**: TREQ-013, TREQ-016
+  - **UserStories**: US-007
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 1: Foundation & Runtime. Scaffold per ADR-001 layout. TREQ-012 (stack) satisfied by ADR-001 (Accepted). Build 3-tier pluggable LLM (Claude->Ollama->fixtures) + OFFLINE_MODE + scope guard (Ms. Chen, fixtures only, no live APIs).
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: foundation-runtime-bl001-2026-05-16
+
+
+- [x] **BL-002**: FEAT-001 Arrival Orchestration Core
+  - **Priority**: Critical
+  - **Agent**: engineer (backend)
+  - **Features**: FEAT-001
+  - **Requirements**: TREQ-001, TREQ-002, TREQ-003, TREQ-004, TREQ-014
+  - **UserStories**: US-001, US-008
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 2: Arrival Orchestration Core. Depends BL FEAT-005. plan() -> 6 role cards + mood banner + Sand Hill anchors, all via Pydantic/tool-use; GET / renders baseline.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: orchestration-core-bl002-2026-05-16
+
+
+- [x] **BL-003**: FEAT-002 Delay-to-Delight Re-plan & Diff
+  - **Priority**: Critical
+  - **Agent**: engineer (fullstack)
+  - **Features**: FEAT-002
+  - **Requirements**: TREQ-005, TREQ-006, TREQ-008
+  - **UserStories**: US-002, US-003
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 3: Delay-to-Delight. Depends BL FEAT-001. TREQ-006 what-changed diff is NEVER CUT (ADR-001); must render even offline. Guest message preview is P1/cuttable.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: delay-to-delight-bl003-2026-05-16
+
+
+- [x] **BL-004**: FEAT-007 Hackathon Compliance & Demo Readiness
+  - **Priority**: Critical
+  - **Agent**: docs
+  - **Features**: FEAT-007
+  - **Requirements**: TREQ-015, TREQ-017
+  - **UserStories**: US-009
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 4: Compliance & Demo Readiness. DISQUALIFICATION GUARD. Land README (names PS#1 + built-today scope) early as low-risk commit; finalize 3-min script + cut order + offline rehearsal after spine works.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: compliance-readme-bl004-2026-05-16
+

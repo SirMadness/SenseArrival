@@ -30,6 +30,28 @@
 **Info:** User confirmed **Ollama is running locally** on the demo machine. Resilience tiers, switchable by env/UI with no code change: **(1) Anthropic Claude cloud = primary/showcased path** (expected robust; Anthropic is a sponsor → also aids Creativity/Impact framing); **(2) Ollama local = dynamic fallback** — keeps the re-plan genuinely "live" with zero network if cloud is hostile; **(3) fixture-replay OFFLINE_MODE = deterministic last resort** (pre-computed baseline/replan JSON, cached TTS MP3). Test all three before the judging room; demo on Claude unless network proves unstable.
 **Related DDs:** DD-004
 
+---
+
+**Topic:** Execution State Snapshot — Re-Discovery Entry (cycle 2)
+**Date:** 2026-05-16
+**Info:** Paused execution to run discovery cycle 2 (scope widening). Action plan at pause: no completed phases; no in-progress phase (all 6 freshly created, none started); pending = Phase 1 Foundation, Phase 2 Orchestration Core, Phase 3 Re-plan & Diff, Phase 4 Compliance, Phase 5 Voice, Phase 6 Polish. Backlog BL-001..BL-007 all Ready, none started. Working branch: build/sense-arrival-mvp. Registry last updated 2026-05-16 (1 completed: ADR-001). No code written yet — cost of re-locking now is near zero.
+**Related DDs:** DD-005, DD-006, DD-007
+
+---
+
+**Topic:** Card data format decision (input vs replay)
+**Date:** 2026-05-16
+**Info:** Guest dossiers + property "sense of place" cards = **Markdown, one file each, template-driven** — human-editable, diff-friendly, judge-visible, loaded as raw prompt context (Claude reads prose; no parser). Output/offline-replay fixtures (baseline_plan.json, replanned_plan.json) **stay JSON** for deterministic Pydantic-validated replay. **No runtime chat-to-create/edit subsystem** (scope-creep guard): "new guest" = copy template .md; editing = edit the .md (optional hot-reload). Makes profile-tuning to pick the final demo guest trivial.
+**Related DDs:** DD-006
+
+---
+
+**Topic:** Authoritative requirement validation — Radha Arora, President, Rosewood Hotels & Resorts
+**Date:** 2026-05-16
+**Info:** Direct source statement (user conversation): (1) Rosewood **manually collects** each customer's data into a profile; (2) tailor the visit to **BOTH the guest profile AND the local culture / activities of where the hotel is located**; (3) hence the importance of **both customer cards and hotel cards** — basis of the hackathon request/rules. Implications: the dual-card model (guest dossier + per-property local-culture card) is the validated CORE of Problem Statement #1, not scope creep — resolves the earlier ADR-001 narrow-slice-vs-breadth tension. "Manually collect into a profile" implies a staff-collection → persistent-profile loop, not only session-scoped card updates. "Local culture/activities of where the hotel is located" makes the hotel card destination-culture-centric (e.g., Broadway/theatre for The Carlyle), broader than on-property amenities.
+**Related DDs:** DD-005, DD-006
+**Related TREQs:** TREQ-019, TREQ-020, TREQ-021
+
 <!-- Notes Format Reference
   Core fields (required on every note):
     Topic, Info, Related DDs

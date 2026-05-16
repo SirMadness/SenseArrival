@@ -1,4 +1,4 @@
-> **Version:** v001.02
+> **Version:** v001.01
 > **Last updated:** 2026-05-16
 > **Source of truth** for Execution phase. History: [archive/](archive/)
 
@@ -114,49 +114,3 @@
   - Three clear panels: inputs/triggers · mood + diff + suppression · role cards with Play Briefing
   - High-contrast, large-font; primary actions (inject delay, submit observation, play briefing) are single-click and obvious
   - Layout holds without horizontal scroll on a typical laptop/projector resolution
-
-## US-011
-- **Title:** As staff at any Rosewood property, my observations about a guest are recorded on their dossier so future arrivals at any property reflect them
-- **Feature:** FEAT-008
-- **Requirements:** TREQ-020
-- **Status:** LOCKED
-- **Priority:** P0
-- **Acceptance Criteria:**
-  - A guest dossier holds >=2 prior stays, each tagged with a Rosewood property and that site's staff observations
-  - Dossier and property cards are Markdown files generated from a documented template
-  - Editing a card's Markdown changes the next render with no code change
-
-## US-012
-- **Title:** As a returning guest, my arrival reflects a unified understanding synthesized across my prior stays at different Rosewood properties
-- **Feature:** FEAT-008
-- **Requirements:** TREQ-021, TREQ-019
-- **Status:** LOCKED
-- **Priority:** P0
-- **Acceptance Criteria:**
-  - The arrival plan visibly reflects >=2 inferred traits derived from cross-property prior observations (e.g., cyclist, theatre-goer)
-  - The UI surfaces an explicit "inferred from prior stays" element naming the source property/observation
-  - Synthesis runs without displacing or delaying the never-cut re-plan diff spine
-  - Works for all 3 seeded guest dossiers across the 3-property fixture set
-
-## US-013
-- **Title:** As the builder/presenter, I can switch the active guest/property to tune the final demo profile and show multi-property on request
-- **Feature:** FEAT-009
-- **Requirements:** TREQ-022
-- **Status:** LOCKED
-- **Priority:** P1
-- **Acceptance Criteria:**
-  - A selector swaps the active guest and arrival property and re-renders via the existing path
-  - The rehearsed 3-min demo does not depend on the selector (single-path safe)
-  - No card creation or editing happens through the UI (Markdown-file workflow only)
-
-## US-014
-- **Title:** As staff, when I leave a voice or typed observation during the visit, it is added to the guest's dossier and the arrival immediately re-choreographs to reflect it
-- **Feature:** FEAT-008
-- **Requirements:** TREQ-023, TREQ-021
-- **Status:** LOCKED
-- **Priority:** P1
-- **Acceptance Criteria:**
-  - A staff voice or typed note captured live is visibly appended to the on-screen guest dossier panel
-  - The cross-visit synthesis re-runs and the arrival plan / affected role cards update
-  - The what-changed diff reflects the new observation as the trigger
-  - The loop runs in-session (in-memory) without disk persistence and does not block or delay the never-cut spine

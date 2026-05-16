@@ -12,10 +12,10 @@
 
 ## Quick Stats
 
-- **Total Reports**: 0
+- **Total Reports**: 10
 - **Active Work**: 0
-- **Completed This Week**: 0
-- **Last Updated**: -
+- **Completed This Week**: 10
+- **Last Updated**: 2026-05-16
 
 ---
 
@@ -32,6 +32,16 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| compliance-readme-bl004-2026-05-16 | implementation | docs | 2026-05-16 | Public README (PS#1 named, dual-card model + Radha Arora validation, honest Built-Today scope, offline quickstart) + demo-playbook (3-min script, ADR-001 cut order never-cut TREQ-006, offline rehearsal). 2 user actions flagged: make repo public, capture backup assets |
+| review-delay-to-delight-bl003-2026-05-16 | tests | code-quality | 2026-05-16 | Never-cut invariant CERTIFIED CLEAN (7-path trace); TD-005/TD-011 verified resolved; 2 CRITICAL (CDN HTMX, unguarded diff) found+fixed in 3115007 + Main-verified |
+| delay-to-delight-bl003-2026-05-16 | implementation | engineer | 2026-05-16 | Never-cut Delay-to-Delight: 1-click delay->HTMX re-plan (no reload), room-legible what-changed diff (trigger+reason/change), clean deterministic offline fixtures; HTMX vendored local + diff routes guarded. Commits 62030fa,3115007 |
+| review-orchestration-bl002-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut spine verified intact end-to-end; structured-output fallback sound; 3-tier toggle clean; 2 MED + 3 LOW deferred |
+| orchestration-core-bl002-2026-05-16 | implementation | engineer | 2026-05-16 | Tier-1 Claude tool-use plan()/replan() returning OrchestratorResponse; GET / renders grounded baseline (mood + 6 role cards, Sand Hill anchors); 3-tier dispatch; graceful fixture fallback; spine clean. Commit 38f766f |
+| review-foundation-bl001-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — model conformance, scope guard, zero-network replay, never-cut spine all confirmed clean; 1 MED + 3 LOW deferred |
+| foundation-runtime-bl001-2026-05-16 | implementation | engineer | 2026-05-16 | FastAPI app skeleton: 8 ADR-002 Pydantic models, raw-MD fixture loader, scope guard (frozenset allowlist, no live APIs), 3-tier backend selector, diff() spine works in replay; plan/replan/voice stubbed for BL-002. Commit b0317ae |
+| rosewood-property-dossier-research-2026-05-16 | analysis | analyst | 2026-05-16 | 3 property profiles (Sand Hill deep/8 anchors; Carlyle NY + Castiglion del Bosco provenance) + 3 cross-property guest dossiers; demo-grade Dossier A drives cyclist/wine/solo-decompressor 'they just knew' synthesis |
+| ADR-002-portfolio-guest-graph-2026-05-16 | architecture | architect | 2026-05-16 | Cycle-2 delta ADR: GuestProfile->GuestDossier + PropertyCard/GuestSynthesis; Markdown dossier/property fixtures + JSON replay; synthesis folded into plan()/replan() and EXCLUDED from PlanDiff (spine-safe); /select routes + /voice/transcribe reuse for staff-note shim (in-memory); canonical offline path = Ms.Chen@Sand Hill |
+| ADR-001-stack-selection-2026-05-16 | architecture | architect | 2026-05-16 | Stack ADR for full 7-FEAT/18-TREQ set: Python/FastAPI/Jinja2-HTMX, Pydantic v2 models, route table, 3-tier LLM resilience (Claude->Ollama->fixtures), offline mode, ruthless cut order (never cut TREQ-006) |
 
 _No completed work yet._
 

@@ -12,11 +12,11 @@
 
 ## Quick Stats
 
-- **Total Items**: 0
-- **Ready**: 0
-- **In Progress**: 0
-- **Blocked**: 0
-- **Last Updated**: -
+- **Total Items**: 8
+- **Ready**: 6
+- **In Progress**: 1
+- **Blocked**: 1
+- **Last Updated**: 2026-05-16
 
 ---
 
@@ -24,7 +24,7 @@
 
 > Items currently being worked on. Limit: 3 concurrent items.
 
-_No items in progress._
+
 
 <!-- Example (for reference only — use the script to add real entries):
 - [ ] **BL-NNN**: Implement JWT token endpoint
@@ -39,13 +39,18 @@ _No items in progress._
   - **Started**: 2026-03-03
 -->
 
+
+
+
+
+
 ---
 
 ## Ready (Prioritized)
 
 > Items ready to be picked up, in priority order. Top item is next.
 
-_No items in backlog._
+
 
 <!-- Example (for reference only — use the script to add real entries):
 - [ ] **BL-NNN**: Add password reset flow
@@ -58,6 +63,66 @@ _No items in backlog._
   - **Added**: 2026-03-01
   - **Details**: Email token flow, 1-hour expiry
 -->
+
+
+
+
+
+
+- [ ] **BL-005**: FEAT-004 Voice Layer (TTS + Staff Notes)
+  - **Priority**: Critical
+  - **Agent**: engineer (fullstack)
+  - **Features**: FEAT-004
+  - **Requirements**: TREQ-009, TREQ-010, TREQ-011
+  - **UserStories**: US-004, US-005
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 5: Voice Layer. Depends BL FEAT-001. Build TREQ-011 typed-text path FIRST (P0, before getUserMedia); TREQ-009 TTS Play Briefing P0; TREQ-010 mic->Scribe STT P1, cuttable to typed path.
+
+
+- [ ] **BL-006**: FEAT-003 Tasteful Restraint (Suppression)
+  - **Priority**: High
+  - **Agent**: engineer (frontend)
+  - **Features**: FEAT-003
+  - **Requirements**: TREQ-007
+  - **UserStories**: US-006
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 6: Originality & UI Polish. P1/cuttable to verbal pitch. Suppression panel: >=1 withheld suggestion + reason; updates after delay re-plan.
+
+
+- [ ] **BL-007**: FEAT-006 Demo Dashboard UI
+  - **Priority**: High
+  - **Agent**: engineer (frontend)
+  - **Features**: FEAT-006
+  - **Requirements**: TREQ-018
+  - **UserStories**: US-010
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 6: Originality & UI Polish. P1. TREQ-018 Deliverable is Design->design but ADR-001 allows inlining under time pressure (engineer-led). Room-legible 3-panel, high-contrast, single-click actions.
+
+
+- [ ] **BL-008**: FEAT-008 Portfolio Guest Graph & Cross-Visit Synthesis
+  - **Priority**: Critical
+  - **Agent**: engineer (fullstack)
+  - **Features**: FEAT-008
+  - **Requirements**: TREQ-020, TREQ-021, TREQ-023
+  - **UserStories**: US-011, US-012, US-014
+  - **Depends On**: BL-005
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 7. STRICTLY behind never-cut spine BL-001->002->003. TREQ-020 grounding hook lands in BL-002; this BL = full cross-visit synthesis (TREQ-021) + staff-note->dossier demo-shim (TREQ-023, reuses BL-005 voice path). Consumes BL-010 researched property content. Criteria injected from v001.02 at delegation.
+
+
+- [ ] **BL-009**: FEAT-009 Interactive Fixture Selector (demo-optional)
+  - **Priority**: High
+  - **Agent**: engineer (frontend)
+  - **Features**: FEAT-009
+  - **Requirements**: TREQ-022
+  - **UserStories**: US-013
+  - **Depends On**: BL-007
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 6 (Polish). P1/cuttable. Thin guest/property fixture-swap selector reusing the render path; rehearsed demo stays single-path; NOT a CRUD/authoring/chat-edit UI.
+
 
 ---
 
