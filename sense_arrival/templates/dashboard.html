@@ -161,21 +161,31 @@
       </section>
       {% endif %}
 
-      <!-- Global Suppression Panel (TREQ-007) — graceful placeholder if no data yet (US-010 AC4) -->
-      {% if response.arrival_plan.suppression %}
-      <section class="suppression-panel">
-        <h2>Tasteful Restraint — Do NOT Offer</h2>
-        <ul>
-          {% for item in response.arrival_plan.suppression %}
-          <li>{{ item }}</li>
+      <!-- Tasteful Restraint / Suppression Panel (BL-006 / TREQ-007 / US-006) -->
+      <!-- Renders from OrchestratorResponse.suppressions — STRUCTURALLY EXCLUDED from diff() / PlanDiff -->
+      {% if response.suppressions %}
+      <section id="suppression-panel" class="suppression-panel">
+        <div class="suppression-header">
+          <h2>Tasteful Restraint</h2>
+          <span class="suppression-badge">What we chose not to offer</span>
+        </div>
+        <p class="suppression-intro">Considered and withheld — grounded in this guest's attested patterns.</p>
+        <div class="suppression-items">
+          {% for item in response.suppressions %}
+          <div class="suppression-item">
+            <div class="suppression-item-suggestion">{{ item.suggestion }}</div>
+            <div class="suppression-item-reason">{{ item.reason }}</div>
+          </div>
           {% endfor %}
-        </ul>
+        </div>
       </section>
       {% else %}
-      <!-- Placeholder: suppression data may be populated after delay re-plan -->
-      <section class="suppression-panel suppression-panel--placeholder">
-        <h2>Tasteful Restraint — Do NOT Offer</h2>
-        <p>Suppression signals will appear here after re-plan (or when role cards carry per-card suppressed items).</p>
+      <!-- Graceful empty state: suppression data not yet available (US-010 AC4) -->
+      <section id="suppression-panel" class="suppression-panel suppression-panel--placeholder">
+        <div class="suppression-header">
+          <h2>Tasteful Restraint</h2>
+        </div>
+        <p>What we chose not to offer — and why. Suppression signals will appear here once the plan is generated.</p>
       </section>
       {% endif %}
 

@@ -26,6 +26,7 @@ from sense_arrival.models import (
     PlanDiff,
     PlanDiffEntry,
     RoleCard,
+    Suppression,
 )
 
 logger = logging.getLogger(__name__)
@@ -40,11 +41,12 @@ _TOOL_SCHEMA = {
     "name": "submit_arrival_plan",
     "description": (
         "Submit the complete arrival orchestration response, including cross-visit "
-        "guest synthesis and a fully grounded arrival plan with role-specific briefings."
+        "guest synthesis, a fully grounded arrival plan with role-specific briefings, "
+        "and a tasteful-restraint suppression list of withheld suggestions with reasons."
     ),
     "input_schema": {
         "type": "object",
-        "required": ["synthesis", "arrival_plan"],
+        "required": ["synthesis", "arrival_plan", "suppressions"],
         "properties": {
             "synthesis": {
                 "type": "object",
@@ -146,6 +148,35 @@ _TOOL_SCHEMA = {
                     },
                 },
             },
+            # BL-006: suppressions — SEPARATE from arrival_plan; never enters diff()
+            "suppressions": {
+                "type": "array",
+                "description": (
+                    "2–4 items the system chose NOT to suggest, with concierge-framed reasons. "
+                    "Each item is a withheld suggestion — experiences or offerings that were "
+                    "considered but suppressed based on the guest's inferred profile. "
+                    "Frame reasons as 'why we held this back', not as criticism. "
+                    "Examples: group tours held for a solo decompressor; arrival-day spa held "
+                    "because guest is fatigued from a red-eye."
+                ),
+                "items": {
+                    "type": "object",
+                    "required": ["suggestion", "reason"],
+                    "properties": {
+                        "suggestion": {
+                            "type": "string",
+                            "description": "The withheld suggestion (e.g. 'Group tours / guided excursions').",
+                        },
+                        "reason": {
+                            "type": "string",
+                            "description": (
+                                "One-sentence concierge-framed reason why this was withheld "
+                                "(e.g. 'solo decompressor — guided programming is the wrong energy for this arrival')."
+                            ),
+                        },
+                    },
+                },
+            },
         },
     },
 }
@@ -168,7 +199,14 @@ Rules:
 5. At least 2 outputs must name specific Rosewood Sand Hill anchors from the property card \
    (e.g. Asaya Spa, Madera, Ridge Rosé Reveal, Bluejay Bikes, Old La Honda Road, Friday Nights at Madera, \
    Flamingo Estate Afternoon Tea) — contextually appropriate, not generic name-drops.
-6. Call submit_arrival_plan exactly once with your complete response. Do not produce any other output.
+6. The suppressions list MUST contain 2–4 items that the system chose NOT to suggest. These are \
+   offerings that were considered but withheld based on the guest's inferred profile and arrival context. \
+   Frame each reason from the hotel's perspective: "why we held this back." This is the "tasteful restraint" \
+   signal — the difference between knowing a guest and surveilling them. Be specific: name the offering \
+   (e.g. "Flamingo Estate Afternoon Tea", "Stanford campus tour", "Group cycling tour") and give a \
+   one-sentence reason drawn from the dossier evidence (e.g. "solo decompressor — guided programming \
+   conflicts with her attested pattern of self-directing downtime").
+7. Call submit_arrival_plan exactly once with your complete response. Do not produce any other output.
 """
 
 
@@ -267,7 +305,14 @@ def _parse_tool_response(response: anthropic.types.Message) -> OrchestratorRespo
                 suppression=plan_data.get("suppression", []),
                 guest_message=plan_data.get("guest_message", ""),
             )
-            return OrchestratorResponse(synthesis=synthesis, arrival_plan=arrival_plan)
+            # BL-006: parse suppressions — SEPARATE field, never enters diff()
+            raw_suppressions = data.get("suppressions", [])
+            suppressions = [Suppression(**s) for s in raw_suppressions]
+            return OrchestratorResponse(
+                synthesis=synthesis,
+                arrival_plan=arrival_plan,
+                suppressions=suppressions,
+            )
     raise ValueError("No submit_arrival_plan tool call found in Claude response.")
 
 
@@ -360,7 +405,14 @@ async def _call_ollama(
                 suppression=plan_data.get("suppression", []),
                 guest_message=plan_data.get("guest_message", ""),
             )
-            return OrchestratorResponse(synthesis=synthesis, arrival_plan=arrival_plan)
+            # BL-006: parse suppressions — SEPARATE field, never enters diff()
+            raw_suppressions = data.get("suppressions", [])
+            suppressions = [Suppression(**s) for s in raw_suppressions]
+            return OrchestratorResponse(
+                synthesis=synthesis,
+                arrival_plan=arrival_plan,
+                suppressions=suppressions,
+            )
     except Exception as exc:
         logger.error(
             "Ollama plan() call failed (%s: %s); falling back to offline fixture.",

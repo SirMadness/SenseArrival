@@ -114,13 +114,35 @@ class PlanDiff(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Orchestrator envelope (ADR-002 Delta 3)
+# Suppression model (BL-006 / TREQ-007 / US-006)
+# ARCHITECTURE NOTE: Suppression is a SEPARATE field on OrchestratorResponse.
+# It MUST NEVER be added to ArrivalPlan, PlanDiff, PlanDiffEntry, or pass
+# through orchestrator.diff(). The diff() function is the never-cut spine
+# (TREQ-006) and operates exclusively on ArrivalPlan fields.
+# ---------------------------------------------------------------------------
+
+class Suppression(BaseModel):
+    """
+    A single withheld suggestion with a concierge-framed reason.
+    Surface in the "Tasteful Restraint" panel — what we chose NOT to offer and why.
+    BL-006 / TREQ-007 / US-006.
+    """
+    suggestion: str     # the withheld item (e.g. "Group tours / guided excursions")
+    reason: str         # one-line concierge-framed reason (e.g. "solo decompressor — wrong energy")
+
+
+# ---------------------------------------------------------------------------
+# Orchestrator envelope (ADR-002 Delta 3 + BL-006 additive extension)
 # ---------------------------------------------------------------------------
 
 class OrchestratorResponse(BaseModel):
     """
     Outer Claude response envelope.  synthesis and arrival_plan travel together
     but only arrival_plan feeds PlanDiff.
+    BL-006: suppressions is an ADDITIVE field — structurally excluded from diff().
     """
     synthesis: GuestSynthesis
     arrival_plan: ArrivalPlan
+    # BL-006: suppression panel data — NEVER enters diff() or PlanDiff.
+    # Populated independently from the synthesis/plan fields.
+    suppressions: list[Suppression] = []

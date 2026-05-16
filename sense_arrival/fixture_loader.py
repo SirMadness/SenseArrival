@@ -29,6 +29,7 @@ from sense_arrival.models import (
     OrchestratorResponse,
     PriorStay,
     PropertyCard,
+    Suppression,
 )
 
 # Fixture root relative to this file's parent (sense_arrival/)
@@ -226,13 +227,24 @@ def load_offline_response(replanned: bool = False) -> OrchestratorResponse:
     """
     Construct an OrchestratorResponse from fixture JSON files.
     Used by orchestrator in OFFLINE_MODE / Backend.REPLAY.
+    BL-006: loads suppressions from the appropriate fixture file.
     """
     plan_file = "replanned_plan.json" if replanned else "baseline_plan.json"
     plan_data = load_plan_json(plan_file)
     synthesis_data = load_plan_json("synthesis_fixture.json")
+
+    # BL-006: load suppressions fixture — separate from arrival_plan (never enters diff)
+    suppressions_file = "replanned_suppressions.json" if replanned else "baseline_suppressions.json"
+    try:
+        suppressions_data = load_plan_json(suppressions_file)
+        suppressions = [Suppression(**s) for s in suppressions_data]
+    except (FileNotFoundError, KeyError, TypeError):
+        suppressions = []
+
     return OrchestratorResponse(
         synthesis=GuestSynthesis(**synthesis_data),
         arrival_plan=ArrivalPlan(**plan_data),
+        suppressions=suppressions,
     )
 
 

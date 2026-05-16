@@ -433,21 +433,91 @@ header h1 { font-size: 2rem; color: var(--rosewood); }
   margin-bottom: 0.6rem;
 }
 
-/* Suppression panel — in Panel B signals column */
+/* Tasteful Restraint / Suppression panel — BL-006 / TREQ-007 / US-006 */
+/* Renders from OrchestratorResponse.suppressions — structurally excluded from diff() */
 .suppression-panel {
   background: #fff8f0;
   border: 1px solid #e8c8a0;
+  border-left: 4px solid #b8860b;
   border-radius: var(--radius);
   padding: 1rem 1.2rem;
   margin-bottom: 0;
 }
-.suppression-panel h2 { font-size: 0.85rem; color: #b8860b; margin-bottom: 0.5rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; }
-.suppression-panel ul { margin-left: 1.2rem; font-size: 0.9rem; }
 
-/* Suppression placeholder — graceful empty state (TREQ-007 / BL-006 may be built later) */
+/* Suppression panel header row */
+.suppression-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+.suppression-panel h2 {
+  font-size: 0.85rem;
+  color: #b8860b;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0;
+}
+
+/* "What we chose not to offer" badge in the panel header */
+.suppression-badge {
+  font-size: 0.62rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: #b8860b;
+  color: white;
+  padding: 0.12rem 0.5rem;
+  border-radius: 3px;
+}
+
+/* Intro line — concierge framing */
+.suppression-intro {
+  font-size: 0.78rem;
+  color: #8a6020;
+  font-style: italic;
+  margin-bottom: 0.65rem;
+}
+
+/* Container for suppression items */
+.suppression-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* Individual suppression item — withheld suggestion + reason */
+.suppression-item {
+  border-left: 3px solid #d0a060;
+  padding-left: 0.75rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+
+/* The withheld suggestion text — prominent */
+.suppression-item-suggestion {
+  font-size: 0.88rem;
+  font-weight: bold;
+  color: #5a3a10;
+  line-height: 1.35;
+  margin-bottom: 0.2rem;
+}
+
+/* The concierge-framed reason — subdued, explanatory */
+.suppression-item-reason {
+  font-size: 0.8rem;
+  color: #8a6020;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Suppression placeholder — graceful empty state (TREQ-007 AC4) */
 .suppression-panel--placeholder {
   background: #fdf8f2;
   border: 1px dashed #d0b080;
+  border-left: 4px dashed #d0b080;
 }
 .suppression-panel--placeholder p {
   font-size: 0.85rem;
