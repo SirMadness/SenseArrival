@@ -95,3 +95,17 @@
   - **Completed**: 2026-05-16
   - **Registry**: compliance-readme-bl004-2026-05-16
 
+
+- [x] **BL-005**: FEAT-004 Voice Layer (TTS + Staff Notes)
+  - **Priority**: Critical
+  - **Agent**: engineer (fullstack)
+  - **Features**: FEAT-004
+  - **Requirements**: TREQ-009, TREQ-010, TREQ-011
+  - **UserStories**: US-004, US-005
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 5: Voice Layer. Depends BL FEAT-001. Build TREQ-011 typed-text path FIRST (P0, before getUserMedia); TREQ-009 TTS Play Briefing P0; TREQ-010 mic->Scribe STT P1, cuttable to typed path.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: voice-layer-bl005-2026-05-16
+

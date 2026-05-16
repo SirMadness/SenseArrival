@@ -12,8 +12,8 @@
 
 ## Quick Stats
 
-- **Total Items**: 8
-- **Ready**: 6
+- **Total Items**: 7
+- **Ready**: 5
 - **In Progress**: 1
 - **Blocked**: 1
 - **Last Updated**: 2026-05-16
@@ -44,6 +44,7 @@
 
 
 
+
 ---
 
 ## Ready (Prioritized)
@@ -68,16 +69,6 @@
 
 
 
-
-- [ ] **BL-005**: FEAT-004 Voice Layer (TTS + Staff Notes)
-  - **Priority**: Critical
-  - **Agent**: engineer (fullstack)
-  - **Features**: FEAT-004
-  - **Requirements**: TREQ-009, TREQ-010, TREQ-011
-  - **UserStories**: US-004, US-005
-  - **Depends On**: —
-  - **Added**: 2026-05-16
-  - **Details**: Action Plan Phase 5: Voice Layer. Depends BL FEAT-001. Build TREQ-011 typed-text path FIRST (P0, before getUserMedia); TREQ-009 TTS Play Briefing P0; TREQ-010 mic->Scribe STT P1, cuttable to typed path.
 
 
 - [ ] **BL-006**: FEAT-003 Tasteful Restraint (Suppression)

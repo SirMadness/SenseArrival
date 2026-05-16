@@ -12,13 +12,13 @@
 
 ## Quick Stats
 
-- **Total Items**: 7
-- **Open**: 7
+- **Total Items**: 9
+- **Open**: 9
 - **Resolved**: 0
 - **Critical**: 0
 - **High**: 0
-- **Medium**: 1
-- **Low**: 6
+- **Medium**: 2
+- **Low**: 7
 - **Last Updated**: 2026-05-16
 
 ---
@@ -83,6 +83,16 @@ _No high-priority tech debt items._
   - **Estimated Effort**: BL-009
   - **Notes**: Set app.state.live_baseline=response in select_guest()
 
+
+- [ ] **TD-014**: Blank textarea submit returns 400; HTMX no swap on non-2xx -> silent failure on P0 typed path
+  - **Priority**: Medium
+  - **Impact**: Demo: empty Submit-as-text shows no feedback, looks broken
+  - **Source**: [review-voice-layer-bl005-2026-05-16.md](review-voice-layer-bl005-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-007
+  - **Notes**: Add required attr to textarea OR return 200+inline error
+
 ---
 
 ## Low (Nice to Have)
@@ -98,16 +108,6 @@ _No high-priority tech debt items._
   - **Estimated Effort**: 10 minutes
   - **Notes**: Was replaced by `calculateScore` in v2.0
 -->
-
-
-- [ ] **TD-006**: static/audio/briefing_cached.mp3 absent — replay TTS returns synthetic silent frame
-  - **Priority**: Low
-  - **Impact**: Offline TTS demo beat has no audible briefing until a real cached MP3 is generated
-  - **Source**: [foundation-runtime-bl001-2026-05-16.md](foundation-runtime-bl001-2026-05-16.md)
-  - **Created**: 2026-05-16
-  - **Owner**: Unassigned
-  - **Estimated Effort**: BL-004
-  - **Notes**: Generate+commit real cached briefing MP3
 
 
 - [ ] **TD-007**: Silent swallow in load_provenance_cards() + Arrival-Property fallback
@@ -156,6 +156,26 @@ _No high-priority tech debt items._
   - **Owner**: Unassigned
   - **Estimated Effort**: post-hackathon
 
+
+- [ ] **TD-015**: _silent_frame() returns 44 null bytes (invalid audio); Play hangs if m4a ever absent
+  - **Priority**: Low
+  - **Impact**: Unreachable now TD-006 resolved; defensive only
+  - **Source**: [review-voice-layer-bl005-2026-05-16.md](review-voice-layer-bl005-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: post-hackathon
+  - **Notes**: Return 503 or minimal ftyp atom
+
+
+- [ ] **TD-016**: POST /select calls orchestrator.plan() with 3 positional args, index() passes 4 (missing session_observations)
+  - **Priority**: Low
+  - **Impact**: P1/demo-optional selector path arg mismatch; verify before BL-009 selector use
+  - **Source**: [review-voice-layer-bl005-2026-05-16.md](review-voice-layer-bl005-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-009
+  - **Notes**: Align plan() call signature
+
 ---
 
 ## Resolved Items
@@ -164,6 +184,17 @@ _No high-priority tech debt items._
 
 
 <!-- Example entry:
+- [x] **TD-006**: static/audio/briefing_cached.mp3 absent — replay TTS returns synthetic silent frame
+  - **Priority**: Low
+  - **Impact**: Offline TTS demo beat has no audible briefing until a real cached MP3 is generated
+  - **Source**: [foundation-runtime-bl001-2026-05-16.md](foundation-runtime-bl001-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-004
+  - **Notes**: Generate+commit real cached briefing MP3
+  - **Resolved**: 2026-05-16
+  - **Resolution**: Resolved BL-005: real cached briefing_cached.m4a (159KB) committed; offline Play Briefing audible; code-quality confirmed REPLAY zero-network
+
 - [x] **TD-011**: No len==6 enforcement in _parse_tool_response (live Claude could return <6 cards)
   - **Priority**: Low
   - **Impact**: Live render degrades visually if Claude returns fewer than 6 role cards; no crash
