@@ -24,6 +24,7 @@ from sense_arrival.models import (
     GuestSynthesis,
     OrchestratorResponse,
     PlanDiff,
+    PlanDiffEntry,
     RoleCard,
 )
 
@@ -213,12 +214,44 @@ def _build_prompt_blocks(
     return "\n\n".join(parts)
 
 
+# TD-011: canonical 6-role set for backfill when a live response returns fewer cards
+_CANONICAL_ROLES = [
+    "Front Desk", "Concierge", "Spa", "Dining", "Housekeeping", "Guest Experience"
+]
+
+_ROLE_PLACEHOLDER_BRIEFING = "Briefing not available for this role in the current plan."
+
+
+def _backfill_role_cards(role_cards: list[RoleCard]) -> list[RoleCard]:
+    """
+    TD-011: Ensure exactly 6 role cards exist. If a live Claude response omits
+    any canonical roles, insert placeholder cards so the grid never collapses.
+    This prevents a short live response from breaking the 6-card UI layout.
+    """
+    existing_roles = {rc.role for rc in role_cards}
+    result = list(role_cards)
+    for role in _CANONICAL_ROLES:
+        if role not in existing_roles:
+            logger.warning("TD-011 backfill: inserting placeholder for missing role '%s'", role)
+            result.append(RoleCard(
+                role=role,
+                briefing=_ROLE_PLACEHOLDER_BRIEFING,
+                priority_actions=["No specific actions — plan data incomplete."],
+                suppressed=[],
+            ))
+    # Preserve order: canonical role order
+    role_order = {r: i for i, r in enumerate(_CANONICAL_ROLES)}
+    result.sort(key=lambda rc: role_order.get(rc.role, 99))
+    return result
+
+
 def _parse_tool_response(response: anthropic.types.Message) -> OrchestratorResponse:
     """
     Extract the submit_arrival_plan tool call input from a Claude response
     and parse it into an OrchestratorResponse.
 
     Raises ValueError if the tool call is absent or the schema is invalid.
+    Applies TD-011 backfill to ensure exactly 6 role cards.
     """
     for block in response.content:
         if block.type == "tool_use" and block.name == "submit_arrival_plan":
@@ -226,6 +259,8 @@ def _parse_tool_response(response: anthropic.types.Message) -> OrchestratorRespo
             synthesis = GuestSynthesis(**data["synthesis"])
             plan_data = data["arrival_plan"]
             role_cards = [RoleCard(**rc) for rc in plan_data["role_cards"]]
+            # TD-011: backfill any missing roles to guarantee 6-card grid
+            role_cards = _backfill_role_cards(role_cards)
             arrival_plan = ArrivalPlan(
                 mood=plan_data["mood"],
                 role_cards=role_cards,
@@ -424,14 +459,73 @@ async def replan(
     return load_offline_response(replanned=True)
 
 
+# ---------------------------------------------------------------------------
+# Role-level trigger and reason maps for the diff panel (TREQ-006 / US-003).
+# These are keyed by (role, change_type) to produce room-legible one-liners.
+# The trigger is what caused the change; the reason is why it matters for this guest.
+# ---------------------------------------------------------------------------
+
+_DIFF_TRIGGER = "120-min flight delay — revised ETA 5:30 PM"
+
+_ROLE_REASONS: dict[str, dict[str, str]] = {
+    # Maps role → {action_substring → one-line reason}
+    # Matched via substring so exact text changes don't break the lookup.
+    "Front Desk": {
+        "Asaya Spa": "Spa window eliminated by late arrival; team needs immediate release",
+        "up-sell": "Early arrival afforded quiet pitch; late arrival means straight to room",
+        "Notify": "Spa hold is no longer viable — cascade notification before 4 PM deadline",
+    },
+    "Concierge": {
+        "Friday Nights at Madera": "She now arrives too tired to use Thursday evening programming",
+        "Ridge Rosé Reveal": "Compressed Thursday — pivot from full reveal to brief pour",
+        "Madera table": "Dinner window pushed; she needs a table at 7:30 not 6:30",
+        "45 minutes": "Limited evening energy post-delay — low-intensity only",
+    },
+    "Spa": {
+        "9:30 AM": "Post-cycling recovery window opens Friday; capture it now",
+        "Release": "4 PM appointment no longer reachable — release slot for other guests",
+        "recovery-focused": "Arrival-day spa removed; Friday slot absorbs the recovery need",
+    },
+    "Dining": {
+        "7:30 PM": "Delayed arrival shifts dinner 90 minutes later across all roles",
+        "Extended wine": "Late arrival = limited stamina; brief pour replaces full tasting",
+        "Reserve a quiet": "Timing shift: proactive hold becomes delay-adjusted commitment",
+    },
+    "Housekeeping": {
+        "8:00 PM": "Later arrival compresses turndown window — move it or it conflicts",
+        "8:30 PM": "Original window no longer reachable with 5:30 PM check-in",
+    },
+    "Guest Experience": {
+        "Handwritten note": "Acknowledge the long travel day without naming the delay",
+        "acknowledging her return": "Return acknowledgment absorbed into travel-day note",
+    },
+}
+
+
+def _reason_for(role: str, action: str, change_type: str) -> str:
+    """
+    Look up a one-line reason for a specific changed action.
+    Falls back to a generic reason if no specific match is found.
+    """
+    role_map = _ROLE_REASONS.get(role, {})
+    for key, reason in role_map.items():
+        if key.lower() in action.lower():
+            return reason
+    # Generic fallback reasons by change type
+    if change_type == "added":
+        return f"New action added to account for the delay impact on {role.lower()} timing"
+    return f"Original action superseded by delay-adjusted plan for {role.lower()}"
+
+
 def diff(baseline: ArrivalPlan, replanned: ArrivalPlan) -> PlanDiff:
     """
     Compute structured diff between two ArrivalPlans.
     Synthesis is explicitly excluded — only ArrivalPlan fields participate.
     This is the never-cut spine (TREQ-006).
 
-    BL-001: minimal diff implementation (role-name comparison).
-    BL-002 may enrich with Claude-generated rationale.
+    Returns PlanDiff with per-change entries (PlanDiffEntry) carrying:
+    - trigger: what caused this change
+    - reason: one-line why this specific action changed (room-legible)
     """
     baseline_roles = {rc.role: rc for rc in baseline.role_cards}
     replanned_roles = {rc.role: rc for rc in replanned.role_cards}
@@ -439,27 +533,74 @@ def diff(baseline: ArrivalPlan, replanned: ArrivalPlan) -> PlanDiff:
     changed: list[str] = []
     added_actions: list[str] = []
     removed_actions: list[str] = []
+    entries: list[PlanDiffEntry] = []
 
-    for role, new_card in replanned_roles.items():
+    # Iterate in canonical role order for consistent panel display
+    for role in _CANONICAL_ROLES:
+        new_card = replanned_roles.get(role)
         old_card = baseline_roles.get(role)
-        if old_card is None:
+
+        if new_card is None and old_card is not None:
+            # Role removed entirely (unusual — present for completeness)
             changed.append(role)
-            added_actions.extend(new_card.priority_actions)
+            for action in old_card.priority_actions:
+                removed_actions.append(action)
+                entries.append(PlanDiffEntry(
+                    role=role,
+                    action=action,
+                    change_type="removed",
+                    trigger=_DIFF_TRIGGER,
+                    reason=_reason_for(role, action, "removed"),
+                ))
             continue
+
+        if new_card is None:
+            continue
+
+        if old_card is None:
+            # New role added (unusual)
+            changed.append(role)
+            for action in new_card.priority_actions:
+                added_actions.append(action)
+                entries.append(PlanDiffEntry(
+                    role=role,
+                    action=action,
+                    change_type="added",
+                    trigger=_DIFF_TRIGGER,
+                    reason=_reason_for(role, action, "added"),
+                ))
+            continue
+
         old_set = set(old_card.priority_actions)
         new_set = set(new_card.priority_actions)
-        if old_set != new_set:
-            changed.append(role)
-            added_actions.extend(new_set - old_set)
-            removed_actions.extend(old_set - new_set)
 
-    for role in baseline_roles:
-        if role not in replanned_roles:
+        role_added = new_set - old_set
+        role_removed = old_set - new_set
+
+        if role_added or role_removed:
             changed.append(role)
-            removed_actions.extend(baseline_roles[role].priority_actions)
+            for action in sorted(role_removed):
+                removed_actions.append(action)
+                entries.append(PlanDiffEntry(
+                    role=role,
+                    action=action,
+                    change_type="removed",
+                    trigger=_DIFF_TRIGGER,
+                    reason=_reason_for(role, action, "removed"),
+                ))
+            for action in sorted(role_added):
+                added_actions.append(action)
+                entries.append(PlanDiffEntry(
+                    role=role,
+                    action=action,
+                    change_type="added",
+                    trigger=_DIFF_TRIGGER,
+                    reason=_reason_for(role, action, "added"),
+                ))
 
     rationale = (
-        f"Re-plan triggered by delay event. {len(changed)} role(s) updated."
+        f"Re-plan triggered by delay event. {len(changed)} role(s) updated: "
+        f"{', '.join(changed)}."
         if changed
         else "No changes detected between baseline and re-plan."
     )
@@ -469,4 +610,5 @@ def diff(baseline: ArrivalPlan, replanned: ArrivalPlan) -> PlanDiff:
         added_actions=added_actions,
         removed_actions=removed_actions,
         rationale=rationale,
+        entries=entries,
     )

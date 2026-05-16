@@ -126,6 +126,8 @@ async def index(request: Request) -> HTMLResponse:
         "offline": backend == Backend.REPLAY,
         "dossier_slugs": list_dossier_slugs(),
         "property_slugs": list_property_slugs(),
+        "plan_diff": None,
+        "replanned": False,
     })
 
 
@@ -137,17 +139,33 @@ async def index(request: Request) -> HTMLResponse:
 async def replan(request: Request) -> HTMLResponse:
     """
     Inject the delay event fixture and generate a re-planned arrival.
-    Returns the dashboard fragment for HTMX swap.
+    Returns the dashboard fragment for HTMX swap, including the diff panel.
     """
     backend: Backend = app.state.backend
     delay_event = load_delay_event()
 
     if backend == Backend.REPLAY:
+        baseline_resp = app.state.cached_baseline or load_offline_response(replanned=False)
         response = app.state.cached_replanned or load_offline_response(replanned=True)
     else:
         dossier_md = load_dossier("ms-chen")
         arrival_md = load_property_card("rosewood-sand-hill")
         provenance_mds = load_provenance_cards("ms-chen", exclude="rosewood-sand-hill")
+        # Ensure we have a baseline to diff against
+        baseline_resp = app.state.live_baseline
+        if baseline_resp is None:
+            # Baseline not yet loaded; load it now for the diff
+            try:
+                baseline_resp = await orchestrator.plan(
+                    dossier_md, arrival_md, provenance_mds,
+                    app.state.session_observations,
+                    backend=backend,
+                )
+                app.state.live_baseline = baseline_resp
+            except Exception as exc:
+                logger.warning("baseline plan() failed during replan: %s", exc)
+                baseline_resp = load_offline_response(replanned=False)
+
         try:
             response = await orchestrator.replan(
                 dossier_md, arrival_md, provenance_mds,
@@ -160,6 +178,18 @@ async def replan(request: Request) -> HTMLResponse:
         except NotImplementedError as exc:
             logger.warning("replan() not implemented: %s", exc)
             response = None
+            baseline_resp = None
+
+    # Compute the diff to include in the replan response
+    plan_diff = None
+    if response is not None and baseline_resp is not None:
+        try:
+            plan_diff = orchestrator.diff(
+                baseline_resp.arrival_plan,
+                response.arrival_plan,
+            )
+        except Exception as exc:
+            logger.warning("diff() failed in replan handler: %s", exc)
 
     return _tmpl(request, {
         "response": response,
@@ -167,11 +197,13 @@ async def replan(request: Request) -> HTMLResponse:
         "offline": backend == Backend.REPLAY,
         "dossier_slugs": list_dossier_slugs(),
         "property_slugs": list_property_slugs(),
+        "plan_diff": plan_diff,
+        "replanned": True,
     })
 
 
 # ---------------------------------------------------------------------------
-# GET /diff  — PlanDiff panel
+# GET /diff  — PlanDiff JSON (spine endpoint, unchanged contract)
 # ---------------------------------------------------------------------------
 
 @app.get("/diff", response_class=JSONResponse)
@@ -200,6 +232,39 @@ async def get_diff(request: Request) -> JSONResponse:
         replanned_resp.arrival_plan,
     )
     return JSONResponse(plan_diff.model_dump())
+
+
+# ---------------------------------------------------------------------------
+# GET /diff-panel  — PlanDiff HTML fragment (HTMX target, TREQ-006 / US-003)
+# ---------------------------------------------------------------------------
+
+@app.get("/diff-panel", response_class=HTMLResponse)
+async def get_diff_panel(request: Request) -> HTMLResponse:
+    """
+    Return the rendered diff panel HTML fragment for HTMX swap.
+    Synthesis does not participate — arrival_plan only (TREQ-006 spine intact).
+    """
+    backend: Backend = app.state.backend
+
+    if backend == Backend.REPLAY:
+        baseline_resp = app.state.cached_baseline or load_offline_response(replanned=False)
+        replanned_resp = app.state.cached_replanned or load_offline_response(replanned=True)
+    else:
+        baseline_resp = app.state.live_baseline
+        replanned_resp = app.state.live_replanned
+        if baseline_resp is None or replanned_resp is None:
+            return HTMLResponse(
+                '<div class="diff-panel diff-panel--pending">'
+                '<p>Run <strong>Inject Delay &amp; Re-plan</strong> to see what changed.</p>'
+                '</div>',
+                status_code=200,
+            )
+
+    plan_diff = orchestrator.diff(
+        baseline_resp.arrival_plan,
+        replanned_resp.arrival_plan,
+    )
+    return templates.TemplateResponse(request, "diff_panel.html", {"diff": plan_diff})
 
 
 # ---------------------------------------------------------------------------

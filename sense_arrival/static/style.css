@@ -242,3 +242,239 @@ blockquote { font-style: italic; line-height: 1.8; }
 /* HTMX indicator */
 .htmx-indicator { display: none; }
 .htmx-request .htmx-indicator { display: inline; }
+
+/* =========================================================================
+   DELAY INJECTION UI — BL-003
+   ========================================================================= */
+
+/* Inject Delay button — larger, prominent, headline demo action */
+.btn-inject {
+  font-size: 1.05rem;
+  padding: 0.75rem 1.6rem;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+}
+
+/* In-progress spinner label next to the button */
+.replan-indicator {
+  font-style: italic;
+  color: var(--light-slate);
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+/* Delay injected confirmation banner */
+.delay-injected-banner {
+  background: #1a4a2e;
+  color: #a8e6bf;
+  padding: 0.65rem 1.2rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.delay-injected-icon {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Mood banner — replanned variant */
+.mood-banner--replanned {
+  background: #3d2b1a;
+}
+.mood-note {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Role card — changed highlight */
+.role-card--changed {
+  border-left: 4px solid #c0622a;
+  background: #fdf8f4;
+}
+.role-changed-badge {
+  display: inline-block;
+  background: #c0622a;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+
+/* =========================================================================
+   NEVER-CUT DIFF PANEL — TREQ-006 / US-003
+   Room-legible: readable from across a table in a judging room.
+   ========================================================================= */
+
+#diff-panel,
+.diff-panel {
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+
+.diff-panel--pending {
+  background: #f8f8f8;
+  border: 1px dashed #bbb;
+  padding: 1rem 1.5rem;
+  color: var(--light-slate);
+  font-style: italic;
+}
+
+.diff-panel--no-changes {
+  background: #f0f8f0;
+  border: 1px solid #9ccc9c;
+  padding: 1.2rem 1.5rem;
+}
+
+/* Main diff panel — high-contrast dark header */
+.diff-panel-header {
+  background: #1c2a38;
+  color: white;
+  padding: 1rem 1.5rem 0.75rem;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.diff-panel-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  color: white;
+}
+.diff-panel-meta {
+  font-size: 0.85rem;
+  color: #8ab0cc;
+  font-style: italic;
+}
+
+/* Trigger banner — single prominent line stating what triggered the re-plan */
+.diff-trigger-banner {
+  background: #c0622a;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.diff-trigger-label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.diff-trigger-text {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Diff entries container */
+.diff-entries {
+  background: #ffffff;
+  border: 1px solid #d0d8e0;
+  border-top: none;
+}
+
+/* Role group label — separates roles visually */
+.diff-role-label {
+  background: #eef2f6;
+  color: #3d5a72;
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 1.5rem;
+  border-top: 1px solid #d0d8e0;
+}
+.diff-role-label:first-child {
+  border-top: none;
+}
+
+/* Individual diff entry */
+.diff-entry {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #eaecee;
+  align-items: flex-start;
+}
+.diff-entry:last-child {
+  border-bottom: none;
+}
+
+/* Added entry — green left border */
+.diff-entry--added {
+  border-left: 4px solid #2a7a3e;
+  background: #f6fdf8;
+}
+
+/* Removed entry — warm red left border */
+.diff-entry--removed {
+  border-left: 4px solid #8a2a2a;
+  background: #fdf6f6;
+}
+
+/* Badge: + NEW / − OUT */
+.diff-entry-badge {
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}
+.diff-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.diff-badge--added {
+  background: #2a7a3e;
+  color: white;
+}
+.diff-badge--removed {
+  background: #8a2a2a;
+  color: white;
+}
+
+/* Entry content: action text + one-line reason */
+.diff-entry-content {
+  flex: 1;
+  min-width: 0;
+}
+.diff-entry-action {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--slate);
+  line-height: 1.4;
+  margin-bottom: 0.2rem;
+}
+.diff-entry-reason {
+  font-size: 0.82rem;
+  color: var(--light-slate);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+/* Rationale footer */
+.diff-rationale {
+  background: #f0f4f8;
+  border: 1px solid #d0d8e0;
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 0.7rem 1.5rem;
+  font-size: 0.82rem;
+  color: var(--light-slate);
+  font-style: italic;
+}

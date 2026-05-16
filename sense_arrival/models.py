@@ -73,15 +73,30 @@ class ArrivalPlan(BaseModel):
     guest_message: str      # personalised welcome note for the guest
 
 
+class PlanDiffEntry(BaseModel):
+    """
+    A single change entry in the diff panel (TREQ-006 / US-003).
+    Each entry carries the change, its trigger (what caused it), and a
+    one-line reason (why it matters for this guest).
+    Synthesis never enters this path — arrival_plan fields only.
+    """
+    role: str           # which role card this entry belongs to
+    action: str         # the changed action text
+    change_type: str    # "added" | "removed"
+    trigger: str        # what triggered this change (e.g. "120-min flight delay")
+    reason: str         # one-line: why this specific change was made
+
+
 class PlanDiff(BaseModel):
     """
     Structured diff between baseline and re-planned ArrivalPlan.
     This is the never-cut spine (TREQ-006). Synthesis never enters this path.
     """
-    changed_roles: list[str]    # role names that changed
-    added_actions: list[str]    # new priority actions added in the replan
-    removed_actions: list[str]  # actions removed in the replan
-    rationale: str              # plain-English explanation of why the plan changed
+    changed_roles: list[str]        # role names that changed
+    added_actions: list[str]        # new priority actions added in the replan
+    removed_actions: list[str]      # actions removed in the replan
+    rationale: str                  # plain-English explanation of why the plan changed
+    entries: list[PlanDiffEntry] = []  # structured per-change entries for the diff panel
 
 
 # ---------------------------------------------------------------------------

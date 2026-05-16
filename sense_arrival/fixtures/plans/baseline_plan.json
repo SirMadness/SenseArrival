@@ -1,5 +1,5 @@
 {
-  "mood": "restorative",
+  "mood": "Restorative",
   "role_cards": [
     {
       "role": "Front Desk",
@@ -8,27 +8,26 @@
         "Confirm garden-view King suite is ready and pre-cooled",
         "Have still water and a light fruit plate in the room on arrival",
         "Offer a quiet check-in — no up-sell at the desk",
-        "Note that she may want an early wake-up for Friday morning cycling"
+        "Bluejay Bikes Friday 6:30 AM — confirm with Concierge before 3 PM"
       ],
       "suppressed": [
         "Group tours or curated excursions",
         "Flamingo Estate Tea (social, wrong arrival mood)",
-        "Stanford campus suggestion at check-in (work-adjacent, not decompression)"
+        "Stanford campus suggestion at check-in"
       ]
     },
     {
       "role": "Concierge",
       "briefing": "Ms. Chen is a serious road cyclist with a Tuscany pedigree — she rode Val d'Orcia Strade Bianche before breakfast. For Friday morning, proactively arrange Bluejay Bikes access and surface the Old La Honda climb or Portola Valley loop. She will not ask twice; have the logistics ready to confirm when she inquires.",
       "priority_actions": [
-        "Pre-book Bluejay Bikes for Friday 6:30–6:45 AM departure",
+        "Bluejay Bikes Friday 6:30 AM — confirm with Front Desk before 3 PM",
         "Prepare a printed route card for Old La Honda Road and the Portola Valley loop",
         "Surface Ridge Rosé Reveal for Thursday evening (quiet, wine-focused, no group)",
-        "Note Friday Nights at Madera as a back-pocket option if she shows energy on Friday"
+        "Friday Nights at Madera — hold as a back-pocket option for Friday evening"
       ],
       "suppressed": [
         "Private driver excursions",
-        "Group wine tours",
-        "Friday Nights at Madera on Thursday (she just arrived)"
+        "Group wine tours"
       ]
     },
     {
@@ -48,8 +47,8 @@
       "role": "Dining",
       "briefing": "Ms. Chen takes breakfast in-suite — prompt, reading-focused, not interrupted by upsell. For Thursday evening, Ridge Rosé Reveal is the preferred wine experience. Friday dinner: no specific pattern yet; offer Madera chef's-table option as a quiet, substantive choice.",
       "priority_actions": [
-        "Set in-suite breakfast for Friday 7:00 AM (FT, WSJ, and New Yorker alongside)",
-        "Brief wine team on Ridge Rosé Reveal for Thursday evening — guest has Brunello-level terroir knowledge",
+        "In-suite breakfast Friday 7:00 AM (FT, WSJ, New Yorker alongside)",
+        "Brief wine team on Ridge Rosé Reveal — guest has Brunello-level terroir knowledge",
         "Reserve a quiet Madera garden table for Thursday dinner if she wants to dine in"
       ],
       "suppressed": [
@@ -62,16 +61,16 @@
       "briefing": "No interruptions Thursday evening after 9 PM. In-suite breakfast Friday 7:00 AM — quiet knock, leave tray, do not engage unless addressed. Guest may be reading or on a call.",
       "priority_actions": [
         "Turndown service before 8:30 PM on Thursday",
-        "In-suite breakfast delivery Friday 7:00 AM — no knock-and-enter",
+        "In-suite breakfast Friday 7:00 AM — quiet knock, leave tray",
         "Ensure the room is quiet: no hallway noise Thursday night"
       ],
       "suppressed": []
     },
     {
       "role": "Guest Experience",
-      "briefing": "Ms. Chen is a known Rosewood guest (prior stays at The Carlyle and Castiglion del Bosco). The synthesis team has cross-referenced her dossier. This is a decompression arrival — the 'they just knew' moment is getting the Bluejay Bikes arranged and the Ridge Rosé Reveal surfaced without her having to ask for either.",
+      "briefing": "Ms. Chen is a known Rosewood guest (prior stays at The Carlyle and Castiglion del Bosco). This is a decompression arrival — the 'they just knew' moment is getting the Bluejay Bikes arranged and the Ridge Rosé Reveal surfaced without her having to ask for either.",
       "priority_actions": [
-        "Ensure Concierge has Bluejay Bikes confirmed before 3 PM Thursday",
+        "Bluejay Bikes Friday 6:30 AM — ensure Concierge has confirmed before 3 PM Thursday",
         "Have Ridge Rosé Reveal available Thursday evening — no reservation required, walk-up welcome",
         "Leave a handwritten note in the room acknowledging her return to Rosewood"
       ],

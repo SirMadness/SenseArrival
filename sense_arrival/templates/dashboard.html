@@ -22,16 +22,32 @@
 
 <main id="dashboard-root">
 
-  <!-- Backend toggle form -->
+  <!-- Controls: Inject Delay button is the headline demo action -->
   <section class="controls">
-    <form hx-post="/replan" hx-target="#dashboard-root" hx-swap="innerHTML">
-      <button type="submit" class="btn-primary">Inject Delay &amp; Re-plan</button>
+    <form hx-post="/replan"
+          hx-target="#dashboard-root"
+          hx-swap="innerHTML"
+          hx-indicator="#replan-indicator">
+      <button type="submit" class="btn-primary btn-inject">
+        &#9888; Inject Delay &amp; Re-plan
+      </button>
+      <span id="replan-indicator" class="htmx-indicator replan-indicator">
+        Re-planning&#8230;
+      </span>
     </form>
     <a href="/diff" class="btn-secondary">View Diff (JSON)</a>
     {% if not offline %}
     <a href="/select" class="btn-secondary">Change Guest / Property</a>
     {% endif %}
   </section>
+
+  {% if replanned %}
+  <!-- Delay injection status banner -->
+  <div class="delay-injected-banner">
+    <span class="delay-injected-icon">&#10003;</span>
+    Delay injected — 120-min ATC hold at JFK &middot; Revised ETA 5:30 PM &middot; Plan re-choreographed
+  </div>
+  {% endif %}
 
   {% if show_selector is defined and show_selector %}
   <!-- Guest / Property Selector (TREQ-022) -->
@@ -62,9 +78,23 @@
   {% if response %}
 
   <!-- Mood Banner -->
-  <section class="mood-banner">
+  <section id="mood-banner" class="mood-banner{% if replanned %} mood-banner--replanned{% endif %}">
     <h2>Arrival Mood: <span class="mood">{{ response.arrival_plan.mood }}</span></h2>
+    {% if replanned %}
+    <p class="mood-note">Re-choreographed for delayed arrival — Thursday evening compressed, Friday arc intact</p>
+    {% endif %}
   </section>
+
+  <!-- NEVER-CUT DIFF PANEL (TREQ-006 / US-003) — rendered inline after replan -->
+  {% set diff = plan_diff %}
+  {% if diff and diff.entries %}
+  {% include "diff_panel.html" %}
+  {% elif diff is none %}
+  <!-- Pre-replan: show pending diff panel with load trigger -->
+  <section id="diff-panel" class="diff-panel diff-panel--pending">
+    <p>Click <strong>Inject Delay &amp; Re-plan</strong> to see what changes and why.</p>
+  </section>
+  {% endif %}
 
   <!-- Synthesis Panel (TREQ-021) -->
   <section id="synthesis-panel" class="synthesis-panel">
@@ -84,9 +114,14 @@
   <section id="role-cards" class="role-cards">
     <h2>Role Briefings</h2>
     {% for card in response.arrival_plan.role_cards %}
-    <div class="role-card{% if card.role == 'Front Desk' %} role-card--front-desk{% endif %}">
+    <div class="role-card{% if card.role == 'Front Desk' %} role-card--front-desk{% endif %}{% if plan_diff and card.role in plan_diff.changed_roles %} role-card--changed{% endif %}">
       <div class="role-card-header">
-        <h3>{{ card.role }}</h3>
+        <h3>
+          {{ card.role }}
+          {% if plan_diff and card.role in plan_diff.changed_roles %}
+          <span class="role-changed-badge">Updated</span>
+          {% endif %}
+        </h3>
         <button
           hx-get="/voice/tts/{{ card.role | lower | replace(' ', '-') }}"
           hx-swap="none"
