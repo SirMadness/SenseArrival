@@ -13,9 +13,9 @@
 ## Quick Stats
 
 - **Total Items**: 4
-- **Ready**: 2
+- **Ready**: 1
 - **In Progress**: 1
-- **Blocked**: 1
+- **Blocked**: 2
 - **Last Updated**: 2026-05-16
 
 ---
@@ -77,16 +77,6 @@
 
 
 
-- [ ] **BL-009**: FEAT-009 Interactive Fixture Selector (demo-optional)
-  - **Priority**: High
-  - **Agent**: engineer (frontend)
-  - **Features**: FEAT-009
-  - **Requirements**: TREQ-022
-  - **UserStories**: US-013
-  - **Depends On**: BL-007
-  - **Added**: 2026-05-16
-  - **Details**: Action Plan Phase 6 (Polish). P1/cuttable. Thin guest/property fixture-swap selector reusing the render path; rehearsed demo stays single-path; NOT a CRUD/authoring/chat-edit UI.
-
 
 ---
 
@@ -94,7 +84,7 @@
 
 > Items that can't proceed until a dependency is resolved.
 
-_No blocked items._
+
 
 <!-- Example (for reference only):
 - [ ] **BL-NNN**: Frontend auth integration
@@ -108,6 +98,18 @@ _No blocked items._
   - **Details**: Waiting on JWT endpoint
   - **Blocked By**: JWT endpoint not ready (BL-NNN)
 -->
+
+
+- [ ] **BL-009**: FEAT-009 Interactive Fixture Selector (demo-optional)
+  - **Priority**: High
+  - **Agent**: engineer (frontend)
+  - **Features**: FEAT-009
+  - **Requirements**: TREQ-022
+  - **UserStories**: US-013
+  - **Depends On**: BL-007
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 6 (Polish). P1/cuttable. Thin guest/property fixture-swap selector reusing the render path; rehearsed demo stays single-path; NOT a CRUD/authoring/chat-edit UI.
+  - **Blocked By**: CUT — demo-optional interactive selector; deferred per ADR-001 cut order + user call-time decision 2026-05-16. Not built today. Selector returns 503 in OFFLINE_MODE anyway; rehearsed demo is single-path.
 
 ---
 

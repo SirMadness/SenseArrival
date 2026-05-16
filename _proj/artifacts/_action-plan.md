@@ -143,6 +143,8 @@ _No completed phases yet._
 
 - **2026-05-16**: RECONCILE RESOLVED: provenance = The Carlyle (New York) + Rosewood Castiglion del Bosco (Tuscany); arrival-deep = Rosewood Sand Hill. Canonical demo guest = 'Ms. Chen' (preserves locked US-008) using analyst Dossier A demo-grade content (cyclist + wine-terroir + solo-decompressor + cultural appetite; prior stays Carlyle + Castiglion). Guests B/C = Priya Nair, James Okafor. Fixtures supersede ADR-002 placeholders: dossiers/{ms-chen,priya-nair,james-okafor}.md ; properties/{rosewood-sand-hill,the-carlyle-new-york,castiglion-del-bosco}.md ; offline canonical = ms-chen@rosewood-sand-hill. ADR-002 design decisions unchanged (names were illustrative).
 
+- **2026-05-16**: PROJECT LOCKED 2026-05-16: P0 set + dashboard polish (BL-007) + suppression (BL-006) complete & committed. BL-009 interactive selector CUT (demo-optional, per ADR-001 cut order, user-confirmed). Never-cut spine certified clean 6x. Proceeding to lock activities: final offline end-to-end smoke check + demo-playbook finalization. No further feature build.
+
 ---
 
 ## How to Use This Plan
