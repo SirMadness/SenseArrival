@@ -190,8 +190,15 @@ blockquote { font-style: italic; line-height: 1.8; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.2rem;
+  margin-top: 1.5rem;
 }
-.staff-note h2 { font-size: 1rem; color: var(--light-slate); margin-bottom: 0.75rem; }
+.staff-note h2 { font-size: 1rem; color: var(--light-slate); margin-bottom: 0.35rem; }
+.staff-note-hint {
+  font-size: 0.82rem;
+  color: var(--light-slate);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+}
 .staff-note textarea {
   width: 100%;
   font-family: inherit;
@@ -201,6 +208,106 @@ blockquote { font-style: italic; line-height: 1.8; }
   border-radius: 4px;
   margin-bottom: 0.5rem;
   resize: vertical;
+}
+.staff-note-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.obs-submit-btn {
+  font-size: 0.88rem;
+}
+.mic-btn {
+  font-size: 0.88rem;
+}
+
+/* Text-mode banner — visible when mic is unavailable (ADR-001 guard) */
+.text-mode-banner {
+  background: #b8860b;
+  color: white;
+  text-align: center;
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+
+/* =========================================================================
+   STAFF OBSERVATION FEEDBACK — BL-005
+   ========================================================================= */
+
+/* Observation receipt shown in #staff-note-result */
+.observation-receipt {
+  background: #f0f7ff;
+  border: 1px solid #b0cce8;
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+}
+.obs-transcript {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--slate);
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+}
+.obs-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.obs-badge {
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  color: white;
+}
+.obs-badge--spa            { background: #5c7a9e; }
+.obs-badge--dining         { background: #7a5c3a; }
+.obs-badge--concierge      { background: #3a6e5c; }
+.obs-badge--housekeeping   { background: #6e5c3a; }
+.obs-badge--front-desk     { background: var(--rosewood); }
+.obs-badge--dossier-observation { background: #4a5568; }
+.obs-count {
+  font-size: 0.78rem;
+  color: var(--light-slate);
+}
+.obs-loading {
+  font-style: italic;
+  color: var(--light-slate);
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+.observation-error {
+  color: #8a2a2a;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+/* Role card observation indicator — shown when role card has a noted observation */
+.obs-noted-badge {
+  display: inline-block;
+  background: #e8f4e8;
+  color: #2a7a3e;
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  margin-left: 0.4rem;
+  border: 1px solid #9ccc9c;
+}
+
+/* Role card — observation update highlight */
+.role-card--obs-updated {
+  border-left: 4px solid #2a7a3e;
+  background: #f6fdf8;
 }
 
 /* Selector panel */

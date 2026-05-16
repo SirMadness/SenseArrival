@@ -216,9 +216,12 @@
   </section>
   {% endif %}
 
-  <!-- Staff Voice / Text Note (TREQ-023) -->
-  <section class="staff-note">
+  <!-- Staff Voice / Text Note (TREQ-011 typed-text P0 + TREQ-010 mic P1) -->
+  <section class="staff-note" id="staff-note-section">
     <h2>Staff Observation</h2>
+    <p class="staff-note-hint">Record a guest preference, request, or note — it will be reflected on the relevant role card.</p>
+
+    <!-- TREQ-011 (P0): Typed-text path — always visible, always works -->
     <form
       hx-post="/voice/transcribe"
       hx-target="#staff-note-result"
@@ -226,9 +229,25 @@
       hx-encoding="multipart/form-data"
     >
       <input type="hidden" name="source" value="text" />
-      <textarea name="text_input" placeholder="Type a staff observation…" rows="2"></textarea>
-      <button type="submit" class="btn-secondary">Submit Observation</button>
+      <textarea
+        name="text_input"
+        placeholder="Type a staff observation, e.g. 'Guest asked about road cycling routes for tomorrow morning'"
+        rows="3"
+        id="obs-textarea"
+      ></textarea>
+      <div class="staff-note-actions">
+        <button type="submit" class="btn-primary obs-submit-btn">&#10003; Submit as text</button>
+
+        <!-- TREQ-010 (P1): Mic button — shown only if getUserMedia succeeds -->
+        <div id="mic-capture-section" style="display:none;">
+          <button type="button" id="mic-record-btn" class="btn-secondary mic-btn">
+            &#127908; Record Observation
+          </button>
+        </div>
+      </div>
     </form>
+
+    <!-- Observation result / feedback -->
     <div id="staff-note-result"></div>
   </section>
 

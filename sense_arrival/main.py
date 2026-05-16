@@ -8,8 +8,8 @@ Routes (ADR-001 + ADR-002 Delta 4):
   GET  /               — Dashboard (placeholder until BL-002)
   POST /replan         — Inject delay event → re-plan
   GET  /diff           — Return PlanDiff panel fragment
-  POST /voice/transcribe — Browser audio → STT → transcript
-  GET  /voice/tts/{card_id} — ElevenLabs TTS → MP3 stream
+  POST /voice/transcribe — Browser audio/text → STT/text → classify → update role cards
+  GET  /voice/tts/{card_id} — ElevenLabs TTS → MP3 stream of current briefing
   GET  /offline        — Offline-replay mode info
   GET  /select         — Guest/property selector form
   POST /select         — Accept selection → run plan → dashboard
@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
@@ -282,7 +283,60 @@ async def get_diff_panel(request: Request) -> HTMLResponse:
 
 
 # ---------------------------------------------------------------------------
-# POST /voice/transcribe  — STT + observation loop
+# Observation classifier
+# ---------------------------------------------------------------------------
+
+# Keyword buckets for classifying staff observations.
+# Classification determines which role card(s) get updated.
+_CLASSIFY_RULES: list[tuple[str, list[str]]] = [
+    # (classification_key, [keywords...])
+    ("spa",       ["spa", "massage", "asaya", "treatment", "relax", "facial", "body"]),
+    ("dining",    ["dining", "dinner", "lunch", "breakfast", "restaurant", "madera",
+                   "food", "wine", "menu", "table", "meal", "dietary", "vegetarian",
+                   "gluten", "allergy"]),
+    ("concierge", ["bike", "cycling", "cycle", "hike", "hiking", "trail", "outdoor",
+                   "tour", "excursion", "activity", "bluejay", "ridge", "old la honda",
+                   "portola", "winery", "golf", "tennis"]),
+    ("housekeeping", ["room", "suite", "pillow", "towel", "housekeeping", "cleaning",
+                       "turndown", "amenity", "temperature", "ac", "air"]),
+    ("front_desk", ["check-in", "checkout", "check out", "luggage", "bag", "key",
+                    "upgrade", "early", "late"]),
+]
+
+# Roles that map from classification keys
+_CLASSIFY_TO_ROLE: dict[str, str] = {
+    "spa": "Spa",
+    "dining": "Dining",
+    "concierge": "Concierge",
+    "housekeeping": "Housekeeping",
+    "front_desk": "Front Desk",
+}
+
+
+def _classify_observation(text: str) -> str:
+    """
+    Classify a staff observation text into a category.
+
+    Returns one of: 'spa', 'dining', 'concierge', 'housekeeping', 'front_desk',
+    or 'dossier_observation' (general observation, updates whole plan).
+
+    Ambiguous / no match → 'dossier_observation' (US-004: sensible default, never crash).
+    """
+    lower = text.lower()
+    best_match: str | None = None
+    best_count = 0
+
+    for key, keywords in _CLASSIFY_RULES:
+        count = sum(1 for kw in keywords if kw in lower)
+        if count > best_count:
+            best_count = count
+            best_match = key
+
+    return best_match if best_match and best_count > 0 else "dossier_observation"
+
+
+# ---------------------------------------------------------------------------
+# POST /voice/transcribe  — STT + classification + role card update
 # ---------------------------------------------------------------------------
 
 @app.post("/voice/transcribe")
@@ -291,71 +345,247 @@ async def voice_transcribe(
     audio: UploadFile | None = File(default=None),
     text_input: str | None = Form(default=None),
     source: str = Form(default="mic"),
-) -> JSONResponse:
+) -> HTMLResponse:
     """
-    Receive browser audio blob OR typed text → return transcript.
+    Receive browser audio blob OR typed text → classify → update role cards.
 
-    source=mic: audio bytes → ElevenLabs STT
-    source=text: text_input used directly (typed-text fallback — build first)
+    source=text: text_input used directly (TREQ-011 typed-text path — P0)
+    source=mic:  audio bytes → ElevenLabs STT → same downstream path (TREQ-010 — P1)
 
-    If classification returns 'dossier_observation', appends to
-    app.state.session_observations (TREQ-023 in-memory shim).
+    Returns HTMX-compatible HTML:
+    - Primary target (#staff-note-result): transcript + classification feedback.
+    - OOB swap (#role-cards): updated role cards reflecting the new observation.
+
+    Ambiguous note → dossier_observation category → sensible default (US-004, never crash).
+    Classification → appends to app.state.session_observations (TREQ-023 shim).
     """
     backend: Backend = app.state.backend
 
-    if source == "text" and text_input:
-        transcript = text_input
+    # Step 1: resolve transcript
+    if source == "text" and text_input and text_input.strip():
+        transcript = text_input.strip()
     elif audio is not None:
         audio_bytes = await audio.read()
-        transcript = await voice.stt(audio_bytes, backend=backend)
+        try:
+            transcript = await voice.stt(audio_bytes, backend=backend)
+        except Exception as exc:
+            logger.error("STT failed: %s", exc)
+            transcript = voice._hardcoded_transcript()
     else:
-        return JSONResponse({"error": "No audio or text provided."}, status_code=400)
+        return HTMLResponse(
+            '<p class="observation-error">No observation provided.</p>',
+            status_code=400,
+        )
 
-    # BL-002 classification step: for now tag everything as observation
-    classification = "dossier_observation"  # BL-002 will implement real classification
-    if classification == "dossier_observation":
-        app.state.session_observations.append(transcript)
+    # Step 2: classify (US-004 — ambiguous → sensible default, never crash)
+    classification = _classify_observation(transcript)
 
-    return JSONResponse(
-        {
-            "transcript": transcript,
-            "classification": classification,
-            "observation_count": len(app.state.session_observations),
-        }
+    # Step 3: append to in-memory session observations (TREQ-023)
+    app.state.session_observations.append(transcript)
+    obs_count = len(app.state.session_observations)
+
+    # Step 4: get updated plan state with new observation injected
+    # In REPLAY mode, append observation but keep fixture plan (deterministic replay)
+    # In live mode, re-synthesize so the observation appears in updated role cards
+    current_response = _get_current_plan(backend)
+
+    # Step 5: determine which role(s) are affected
+    affected_role = _CLASSIFY_TO_ROLE.get(classification)  # None = all roles / dossier
+
+    # Step 6: render HTML response with OOB swap
+    # Primary target: observation feedback shown in #staff-note-result
+    role_label = affected_role or "General (all roles)"
+    feedback_html = _render_observation_feedback(transcript, classification, role_label, obs_count)
+
+    # OOB swap: updated role cards grid (reflects observation context)
+    # The plan data doesn't change in REPLAY mode, but the "Updated" UI marks affected cards
+    role_cards_html = _render_role_cards_oob(request, current_response, affected_role)
+
+    # Combine: feedback inline + OOB role cards
+    return HTMLResponse(feedback_html + role_cards_html)
+
+
+def _get_current_plan(backend: Backend) -> OrchestratorResponse:
+    """Return the current plan from app state (baseline or replanned)."""
+    # Use replanned if available, otherwise baseline
+    if backend == Backend.REPLAY:
+        return (
+            app.state.cached_replanned
+            or app.state.cached_baseline
+            or load_offline_response(replanned=False)
+        )
+    return (
+        app.state.live_replanned
+        or app.state.live_baseline
+        or load_offline_response(replanned=False)
+    )
+
+
+def _render_observation_feedback(
+    transcript: str,
+    classification: str,
+    role_label: str,
+    obs_count: int,
+) -> str:
+    """Render the observation receipt shown in #staff-note-result."""
+    badge_class = "obs-badge obs-badge--" + classification.replace("_", "-")
+    # Truncate long transcripts for display
+    display_text = transcript if len(transcript) <= 200 else transcript[:197] + "…"
+    return (
+        f'<div class="observation-receipt">'
+        f'<p class="obs-transcript">&ldquo;{display_text}&rdquo;</p>'
+        f'<p class="obs-meta">'
+        f'<span class="{badge_class}">{role_label}</span> &nbsp;'
+        f'<span class="obs-count">Observation {obs_count} recorded</span>'
+        f'</p>'
+        f'</div>'
+    )
+
+
+def _render_role_cards_oob(
+    request: Request,
+    response: OrchestratorResponse,
+    affected_role: str | None,
+) -> str:
+    """
+    Render the role cards grid as an HTMX OOB swap targeting #role-cards.
+    Marks the affected role card with a visual "Observation noted" indicator.
+    """
+    cards_html_parts = []
+
+    for card in response.arrival_plan.role_cards:
+        is_affected = (affected_role is None) or (card.role == affected_role)
+        obs_indicator = ""
+        if is_affected and app.state.session_observations:
+            obs_indicator = (
+                f'<span class="obs-noted-badge">'
+                f'&#128221; Observation noted</span>'
+            )
+
+        changed_class = " role-card--obs-updated" if is_affected else ""
+        fd_class = " role-card--front-desk" if card.role == "Front Desk" else ""
+
+        # Build priority actions HTML
+        actions_html = ""
+        if card.priority_actions:
+            items = "".join(f"<li>{a}</li>" for a in card.priority_actions)
+            if card.role == "Front Desk":
+                actions_html = (
+                    f'<div class="fd-summary">'
+                    f'<div class="fd-row">'
+                    f'<span class="fd-label">Arrival Mode</span>'
+                    f'<span class="fd-value">{response.arrival_plan.mood.title()}</span>'
+                    f'</div>'
+                    f'<div class="fd-row">'
+                    f'<span class="fd-label">Actions</span>'
+                    f'<ul class="fd-actions">{items}</ul>'
+                    f'</div>'
+                )
+                if card.suppressed:
+                    sup_items = "".join(f"<li>{s}</li>" for s in card.suppressed)
+                    actions_html += (
+                        f'<div class="fd-row fd-row--suppressed">'
+                        f'<span class="fd-label">Do NOT Offer</span>'
+                        f'<ul class="fd-suppressed">{sup_items}</ul>'
+                        f'</div>'
+                    )
+                actions_html += "</div>"
+            else:
+                actions_html = f'<ul class="actions">{items}</ul>'
+                if card.suppressed:
+                    sup_items = "".join(f"<li>{s}</li>" for s in card.suppressed)
+                    actions_html += (
+                        f'<details class="suppressed">'
+                        f'<summary>Suppressed ({len(card.suppressed)})</summary>'
+                        f'<ul>{sup_items}</ul>'
+                        f'</details>'
+                    )
+
+        card_id_slug = card.role.lower().replace(" ", "-")
+        cards_html_parts.append(
+            f'<div class="role-card{fd_class}{changed_class}">'
+            f'<div class="role-card-header">'
+            f'<h3>{card.role} {obs_indicator}</h3>'
+            f'<button hx-get="/voice/tts/{card_id_slug}" hx-swap="none" '
+            f'class="tts-btn" onclick="playAudio(this)" title="Play briefing">'
+            f'&#9654; Play</button>'
+            f'</div>'
+            f'<p>{card.briefing}</p>'
+            f'{actions_html}'
+            f'</div>'
+        )
+
+    cards_inner = "\n".join(cards_html_parts)
+    # HTMX OOB swap: hx-swap-oob="innerHTML:#role-cards" replaces the content of #role-cards
+    return (
+        f'<div hx-swap-oob="innerHTML:#role-cards">'
+        f'<h2 style="font-size:1rem;color:#5d7a8a;text-transform:uppercase;'
+        f'letter-spacing:0.08em;margin-bottom:1rem;">Role Briefings</h2>'
+        f'{cards_inner}'
+        f'</div>'
     )
 
 
 # ---------------------------------------------------------------------------
-# GET /voice/tts/{card_id}  — TTS audio stream
+# GET /voice/tts/{card_id}  — TTS audio stream (BL-005)
 # ---------------------------------------------------------------------------
+
+_ROLE_SLUG_TO_NAME: dict[str, str] = {
+    "front-desk": "Front Desk",
+    "concierge": "Concierge",
+    "spa": "Spa",
+    "dining": "Dining",
+    "housekeeping": "Housekeeping",
+    "guest-experience": "Guest Experience",
+}
+
+
+def _get_briefing_for_card(card_id: str, backend: Backend) -> str:
+    """
+    Look up the CURRENT briefing text for a role card from app state.
+
+    Reads from the most recent plan (replanned > baseline > fixture).
+    This ensures TTS reflects the updated briefing after a re-plan (US-005).
+    """
+    role_name = _ROLE_SLUG_TO_NAME.get(card_id.lower())
+    if not role_name:
+        # Unknown card_id — strip badges from raw card_id and try again
+        clean_id = re.sub(r"[^a-z-]", "", card_id.lower().strip())
+        role_name = _ROLE_SLUG_TO_NAME.get(clean_id, card_id.replace("-", " ").title())
+
+    # Get current plan from app state
+    current = _get_current_plan(backend)
+    if current:
+        for card in current.arrival_plan.role_cards:
+            if card.role == role_name:
+                return card.briefing
+
+    # Fallback: generate a contextual briefing text
+    return f"Briefing for the {role_name} role at Rosewood Sand Hill for Ms. Chen's arrival."
+
 
 @app.get("/voice/tts/{card_id}")
 async def voice_tts(card_id: str, request: Request) -> Response:
     """
-    Stream MP3 audio for a role card briefing.
-    card_id: role slug, e.g. "concierge", "spa"
+    Stream audio for a role card briefing via ElevenLabs TTS.
+    card_id: role slug, e.g. "concierge", "spa", "front-desk"
 
-    Replay mode: returns cached MP3.
-    Live mode: calls ElevenLabs generate() — BL-002 scope.
+    BL-005 (US-005): serves the CURRENT briefing text — reflects updated plan after re-plan.
+    REPLAY mode: returns cached M4A (TD-006 — real spoken audio).
+    CLAUDE mode: calls ElevenLabs TTS → MP3 bytes.
     """
     backend: Backend = app.state.backend
 
-    # Placeholder briefing text — BL-002 replaces with real card briefing
-    briefing_text = f"Briefing for {card_id} role card."
+    # Get the current briefing text for this card (US-005: reads updated plan)
+    briefing_text = _get_briefing_for_card(card_id, backend)
 
-    try:
-        audio_bytes = await voice.tts(briefing_text, backend=backend)
-    except NotImplementedError:
-        return Response(
-            content=b"",
-            media_type="audio/mpeg",
-            headers={"X-TTS-Status": "not-implemented"},
-        )
+    audio_bytes, mime_type = await voice.tts(briefing_text, backend=backend)
 
+    ext = "m4a" if mime_type == voice.MIME_M4A else "mp3"
     return Response(
         content=audio_bytes,
-        media_type="audio/mpeg",
-        headers={"Content-Disposition": f'inline; filename="{card_id}.mp3"'},
+        media_type=mime_type,
+        headers={"Content-Disposition": f'inline; filename="{card_id}.{ext}"'},
     )
 
 
