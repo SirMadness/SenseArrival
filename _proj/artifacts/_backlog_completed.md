@@ -123,3 +123,17 @@
   - **Completed**: 2026-05-16
   - **Registry**: portfolio-synthesis-bl008-2026-05-16
 
+
+- [x] **BL-007**: FEAT-006 Demo Dashboard UI
+  - **Priority**: High
+  - **Agent**: engineer (frontend)
+  - **Features**: FEAT-006
+  - **Requirements**: TREQ-018
+  - **UserStories**: US-010
+  - **Depends On**: —
+  - **Added**: 2026-05-16
+  - **Details**: Action Plan Phase 6: Originality & UI Polish. P1. TREQ-018 Deliverable is Design->design but ADR-001 allows inlining under time pressure (engineer-led). Room-legible 3-panel, high-contrast, single-click actions.
+  - **Started**: 2026-05-16
+  - **Completed**: 2026-05-16
+  - **Registry**: dashboard-polish-bl007-2026-05-16
+

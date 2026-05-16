@@ -12,9 +12,9 @@
 
 ## Quick Stats
 
-- **Total Reports**: 14
+- **Total Reports**: 16
 - **Active Work**: 0
-- **Completed This Week**: 14
+- **Completed This Week**: 16
 - **Last Updated**: 2026-05-16
 
 ---
@@ -32,6 +32,8 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| review-dashboard-polish-bl007-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — 4 TD fixes confirmed resolved; never-cut spine 5th cert clean; offline zero-network certified; US-010 legibility met; 2 LOW pre-existing carry-forward |
+| dashboard-polish-bl007-2026-05-16 | implementation | engineer | 2026-05-16 | Room-legible 3-panel dashboard (260px inputs | mood+diff+suppression | role cards w/ filled Play Briefing), no horiz scroll @1280-1440, empty-state suppression; resolved TD-014/017/009/016. Commit d9bd1d4 |
 | review-portfolio-synthesis-bl008-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut spine CERTIFIED CLEAN (4th, programmatic); offline zero-network + no-disk-write certified; 2 MED (HTML escape, offline single-guest synthesis) deferred; P0 set clear |
 | portfolio-synthesis-bl008-2026-05-16 | implementation | engineer | 2026-05-16 | Cross-visit synthesis (InferredPreference + GuestSynthesis.inferred_from): explicit 'inferred from prior stays' panel naming source property+observation; staff-note->dossier->re-synthesis OOB shim (in-memory); offline deterministic. Commit 0812575 |
 | review-voice-layer-bl005-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — offline zero-network CONFIRMED, never-cut spine CONFIRMED, TD-006 resolved; M-001 blank-submit + M-002 silent-frame + LOW select-args deferred; BL-008 clear |

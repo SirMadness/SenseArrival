@@ -12,12 +12,12 @@
 
 ## Quick Stats
 
-- **Total Items**: 11
-- **Open**: 11
+- **Total Items**: 8
+- **Open**: 8
 - **Resolved**: 0
 - **Critical**: 0
 - **High**: 0
-- **Medium**: 3
+- **Medium**: 0
 - **Low**: 8
 - **Last Updated**: 2026-05-16
 
@@ -73,35 +73,6 @@ _No high-priority tech debt items._
   - **Notes**: Create centralized error handler middleware
 -->
 
-
-- [ ] **TD-009**: POST /select does not update app.state.live_baseline
-  - **Priority**: Medium
-  - **Impact**: Using guest selector then GET /diff diffs mismatched guests; fix before demo rehearsal if selector is in judge interaction
-  - **Source**: [review-orchestration-bl002-2026-05-16.md](review-orchestration-bl002-2026-05-16.md)
-  - **Created**: 2026-05-16
-  - **Owner**: Unassigned
-  - **Estimated Effort**: BL-009
-  - **Notes**: Set app.state.live_baseline=response in select_guest()
-
-
-- [ ] **TD-014**: Blank textarea submit returns 400; HTMX no swap on non-2xx -> silent failure on P0 typed path
-  - **Priority**: Medium
-  - **Impact**: Demo: empty Submit-as-text shows no feedback, looks broken
-  - **Source**: [review-voice-layer-bl005-2026-05-16.md](review-voice-layer-bl005-2026-05-16.md)
-  - **Created**: 2026-05-16
-  - **Owner**: Unassigned
-  - **Estimated Effort**: BL-007
-  - **Notes**: Add required attr to textarea OR return 200+inline error
-
-
-- [ ] **TD-017**: Inline HTML builders in main.py inject staff-note/synthesis text without html.escape()
-  - **Priority**: Medium
-  - **Impact**: Safe in offline/fixture demo (controlled content); live Claude mode with crafted note containing < would render raw HTML
-  - **Source**: [review-portfolio-synthesis-bl008-2026-05-16.md](review-portfolio-synthesis-bl008-2026-05-16.md)
-  - **Created**: 2026-05-16
-  - **Owner**: Unassigned
-  - **Estimated Effort**: BL-007
-  - **Notes**: Wrap with stdlib html.escape() — ~5 lines
 
 ---
 
@@ -177,16 +148,6 @@ _No high-priority tech debt items._
   - **Notes**: Return 503 or minimal ftyp atom
 
 
-- [ ] **TD-016**: POST /select calls orchestrator.plan() with 3 positional args, index() passes 4 (missing session_observations)
-  - **Priority**: Low
-  - **Impact**: P1/demo-optional selector path arg mismatch; verify before BL-009 selector use
-  - **Source**: [review-voice-layer-bl005-2026-05-16.md](review-voice-layer-bl005-2026-05-16.md)
-  - **Created**: 2026-05-16
-  - **Owner**: Unassigned
-  - **Estimated Effort**: BL-009
-  - **Notes**: Align plan() call signature
-
-
 - [ ] **TD-018**: Offline synthesis always returns Ms. Chen synthesis_fixture.json for all 3 guests
   - **Priority**: Low
   - **Impact**: Known/accepted per ADR-002 Delta 5; rehearsed demo path is Ms.Chen; live mode synthesizes all 3 correctly
@@ -194,6 +155,15 @@ _No high-priority tech debt items._
   - **Created**: 2026-05-16
   - **Owner**: Unassigned
   - **Estimated Effort**: accepted
+
+
+- [ ] **TD-019**: Stale live_replanned on /select guest-switch without intervening /replan; +pre-existing unescaped {exc} main.py:279 & card_id_slug attr main.py:610
+  - **Priority**: Low
+  - **Impact**: Not demo-reachable (selector 503 in OFFLINE_MODE; fixture-controlled values); post-hackathon hardening
+  - **Source**: [review-dashboard-polish-bl007-2026-05-16.md](review-dashboard-polish-bl007-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: post-hackathon
 
 ---
 
@@ -203,6 +173,50 @@ _No high-priority tech debt items._
 
 
 <!-- Example entry:
+- [x] **TD-016**: POST /select calls orchestrator.plan() with 3 positional args, index() passes 4 (missing session_observations)
+  - **Priority**: Low
+  - **Impact**: P1/demo-optional selector path arg mismatch; verify before BL-009 selector use
+  - **Source**: [review-voice-layer-bl005-2026-05-16.md](review-voice-layer-bl005-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-009
+  - **Notes**: Align plan() call signature
+  - **Resolved**: 2026-05-16
+  - **Resolution**: Resolved BL-007 (d9bd1d4), code-quality confirmed: blank-submit 200+visible / html.escape all 4 OOB builders / /select sets live_baseline + correct plan() args
+
+- [x] **TD-009**: POST /select does not update app.state.live_baseline
+  - **Priority**: Medium
+  - **Impact**: Using guest selector then GET /diff diffs mismatched guests; fix before demo rehearsal if selector is in judge interaction
+  - **Source**: [review-orchestration-bl002-2026-05-16.md](review-orchestration-bl002-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-009
+  - **Notes**: Set app.state.live_baseline=response in select_guest()
+  - **Resolved**: 2026-05-16
+  - **Resolution**: Resolved BL-007 (d9bd1d4), code-quality confirmed: blank-submit 200+visible / html.escape all 4 OOB builders / /select sets live_baseline + correct plan() args
+
+- [x] **TD-017**: Inline HTML builders in main.py inject staff-note/synthesis text without html.escape()
+  - **Priority**: Medium
+  - **Impact**: Safe in offline/fixture demo (controlled content); live Claude mode with crafted note containing < would render raw HTML
+  - **Source**: [review-portfolio-synthesis-bl008-2026-05-16.md](review-portfolio-synthesis-bl008-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-007
+  - **Notes**: Wrap with stdlib html.escape() — ~5 lines
+  - **Resolved**: 2026-05-16
+  - **Resolution**: Resolved BL-007 (d9bd1d4), code-quality confirmed: blank-submit 200+visible / html.escape all 4 OOB builders / /select sets live_baseline + correct plan() args
+
+- [x] **TD-014**: Blank textarea submit returns 400; HTMX no swap on non-2xx -> silent failure on P0 typed path
+  - **Priority**: Medium
+  - **Impact**: Demo: empty Submit-as-text shows no feedback, looks broken
+  - **Source**: [review-voice-layer-bl005-2026-05-16.md](review-voice-layer-bl005-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-007
+  - **Notes**: Add required attr to textarea OR return 200+inline error
+  - **Resolved**: 2026-05-16
+  - **Resolution**: Resolved BL-007 (d9bd1d4), code-quality confirmed: blank-submit 200+visible / html.escape all 4 OOB builders / /select sets live_baseline + correct plan() args
+
 - [x] **TD-006**: static/audio/briefing_cached.mp3 absent — replay TTS returns synthetic silent frame
   - **Priority**: Low
   - **Impact**: Offline TTS demo beat has no audible briefing until a real cached MP3 is generated

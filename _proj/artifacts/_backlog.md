@@ -12,8 +12,8 @@
 
 ## Quick Stats
 
-- **Total Items**: 6
-- **Ready**: 4
+- **Total Items**: 5
+- **Ready**: 3
 - **In Progress**: 1
 - **Blocked**: 1
 - **Last Updated**: 2026-05-16
@@ -38,6 +38,7 @@
   - **Details**: RS256 signing, 15-min expiry
   - **Started**: 2026-03-03
 -->
+
 
 
 
@@ -82,16 +83,6 @@
   - **Added**: 2026-05-16
   - **Details**: Action Plan Phase 6: Originality & UI Polish. P1/cuttable to verbal pitch. Suppression panel: >=1 withheld suggestion + reason; updates after delay re-plan.
 
-
-- [ ] **BL-007**: FEAT-006 Demo Dashboard UI
-  - **Priority**: High
-  - **Agent**: engineer (frontend)
-  - **Features**: FEAT-006
-  - **Requirements**: TREQ-018
-  - **UserStories**: US-010
-  - **Depends On**: —
-  - **Added**: 2026-05-16
-  - **Details**: Action Plan Phase 6: Originality & UI Polish. P1. TREQ-018 Deliverable is Design->design but ADR-001 allows inlining under time pressure (engineer-led). Room-legible 3-panel, high-contrast, single-click actions.
 
 
 
