@@ -12,9 +12,9 @@
 
 ## Quick Stats
 
-- **Total Reports**: 18
+- **Total Reports**: 20
 - **Active Work**: 0
-- **Completed This Week**: 18
+- **Completed This Week**: 20
 - **Last Updated**: 2026-05-16
 
 ---
@@ -32,6 +32,8 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| final-offline-smoke-2026-05-16 | tests | code-quality | 2026-05-16 | VERDICT DEMO-READY — full rehearsed OFFLINE path verified 9/9 PASS, zero-network proven (8 code paths), <20ms responses, HTMX local, never-cut diff has no synthesis/suppression keys; verified click sequence produced; 1 LOW (generic Spa diff reason) |
+| ADR-001-amendment-live-default-2026-05-16-2026-05-16 | architecture | architect | 2026-05-16 | ADR-001 amendment: corrected demo-mode default — live Claude+ElevenLabs is primary/showcased path (TREQ-013 Tier-1), OFFLINE_MODE/replay reframed as rehearsed network fallback not default; auditable dated amendment note added, Status stays Accepted, stack/routes/cut-order untouched; consistent w/ ADR-002 Delta 5 |
 | review-suppression-bl006-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut 6th cert CLEAN, offline determinism confirmed, US-006 met, no regressions; project CLEAR TO LOCK; 2 LOW no-action |
 | suppression-bl006-2026-05-16 | implementation | engineer | 2026-05-16 | Tasteful-restraint suppression: Suppression model as separate OrchestratorResponse field (mirrors GuestSynthesis, never in PlanDiff); 3 baseline / 4 replanned offline fixtures for Ms.Chen; concierge-framed panel fills BL-007 slot. Commit ea409a9 |
 | review-dashboard-polish-bl007-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — 4 TD fixes confirmed resolved; never-cut spine 5th cert clean; offline zero-network certified; US-010 legibility met; 2 LOW pre-existing carry-forward |
