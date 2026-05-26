@@ -12,12 +12,12 @@
 
 ## Quick Stats
 
-- **Total Items**: 9
-- **Open**: 9
+- **Total Items**: 10
+- **Open**: 10
 - **Resolved**: 0
 - **Critical**: 0
 - **High**: 0
-- **Medium**: 0
+- **Medium**: 1
 - **Low**: 9
 - **Last Updated**: 2026-05-16
 
@@ -74,6 +74,15 @@ _No high-priority tech debt items._
 -->
 
 
+
+- [ ] **TD-022**: Ollama/unknown-backend failure-fallback not tagged is_fallback_fixture (silent wrong-guest on Tier-2 failure)
+  - **Priority**: Medium
+  - **Impact**: _call_ollama except-block + plan()/replan() unknown-backend guards return load_offline_response() raw (untagged) — if BACKEND=ollama and Ollama fails, the guest-blind Ms-Chen fixture renders silently as the selected guest (same bug Fix C closed for Claude). OFF every rehearsed path: demo=claude (verified correct), network fallback=OFFLINE_MODE/replay (intentional, gold banner, correctly untagged). Fix = mirror Fix C tagging in 3 spots. Deferred: not a claude-primary-demo blocker per code-quality review.
+  - **Source**: [review-fix-abc-20260516](review-fix-abc-20260516)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: TBD
+
 ---
 
 ## Low (Nice to Have)
@@ -109,15 +118,6 @@ _No high-priority tech debt items._
   - **Owner**: Unassigned
   - **Estimated Effort**: 10m
   - **Notes**: Annotate ADR-002 Delta 5
-
-
-- [ ] **TD-010**: Sync anthropic.Anthropic client in async _call_claude blocks event loop 3-8s
-  - **Priority**: Low
-  - **Impact**: No impact single-user demo; upgrade to AsyncAnthropic if load matters
-  - **Source**: [review-orchestration-bl002-2026-05-16.md](review-orchestration-bl002-2026-05-16.md)
-  - **Created**: 2026-05-16
-  - **Owner**: Unassigned
-  - **Estimated Effort**: BL-005
 
 
 - [ ] **TD-012**: @app.on_event('startup') deprecated in FastAPI 0.111+
@@ -174,6 +174,15 @@ _No high-priority tech debt items._
   - **Owner**: Unassigned
   - **Estimated Effort**: post-hackathon
 
+
+- [ ] **TD-021**: Live Claude call ~22-28s (standard-tier throughput floor)
+  - **Priority**: Low
+  - **Impact**: ACCEPTED CONSTRAINT not a bug: ~4600 input + ~2100 output tok at ~100 tok/s (Haiku, standard tier) = ~24s irreducible. TD-010 fixed (async, spinner animates, fast 35s graceful fallback). Mitigation per ADR-001: OFFLINE_MODE=true is the rehearsed instant zero-code fallback for the judged room if live latency/network is a risk. No further fix without higher API service tier or streaming-render (post-deadline).
+  - **Source**: [live-latency-fix-20260516](live-latency-fix-20260516)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: TBD
+
 ---
 
 ## Resolved Items
@@ -182,6 +191,16 @@ _No high-priority tech debt items._
 
 
 <!-- Example entry:
+- [x] **TD-010**: Sync anthropic.Anthropic client in async _call_claude blocks event loop 3-8s
+  - **Priority**: Low
+  - **Impact**: No impact single-user demo; upgrade to AsyncAnthropic if load matters
+  - **Source**: [review-orchestration-bl002-2026-05-16.md](review-orchestration-bl002-2026-05-16.md)
+  - **Created**: 2026-05-16
+  - **Owner**: Unassigned
+  - **Estimated Effort**: BL-005
+  - **Resolved**: 2026-05-16
+  - **Resolution**: Fixed in live-latency-fix 2026-05-16: _call_claude now uses anthropic.AsyncAnthropic + await (event loop never blocked; HTMX spinner animates during live call). Real impact was ~55-80s not 3-8s — root-caused as standard-tier throughput-bound.
+
 - [x] **TD-016**: POST /select calls orchestrator.plan() with 3 positional args, index() passes 4 (missing session_observations)
   - **Priority**: Low
   - **Impact**: P1/demo-optional selector path arg mismatch; verify before BL-009 selector use

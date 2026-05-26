@@ -34,6 +34,17 @@ body {
   font-weight: bold;
 }
 
+/* Live-path fallback honesty marker — distinct from offline banner */
+.fallback-banner {
+  background: #8b2500;
+  color: #fff3e0;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  font-weight: bold;
+}
+
 /* Header */
 header {
   padding: 1.2rem 0 0.75rem;

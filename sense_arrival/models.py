@@ -140,9 +140,15 @@ class OrchestratorResponse(BaseModel):
     Outer Claude response envelope.  synthesis and arrival_plan travel together
     but only arrival_plan feeds PlanDiff.
     BL-006: suppressions is an ADDITIVE field — structurally excluded from diff().
+    is_fallback_fixture: set True only on the live-path failure fallback so the UI
+    can show an honesty marker.  NEVER set for intentional REPLAY/OFFLINE_MODE paths.
+    NEVER enters diff() or PlanDiff.
     """
     synthesis: GuestSynthesis
     arrival_plan: ArrivalPlan
     # BL-006: suppression panel data — NEVER enters diff() or PlanDiff.
     # Populated independently from the synthesis/plan fields.
     suppressions: list[Suppression] = []
+    # Honesty marker: True only when the live Claude call failed and the offline
+    # fixture was returned as a degradation fallback (not for intentional replay).
+    is_fallback_fixture: bool = False

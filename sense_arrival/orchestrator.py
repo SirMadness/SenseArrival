@@ -39,11 +39,7 @@ logger = logging.getLogger(__name__)
 
 _TOOL_SCHEMA = {
     "name": "submit_arrival_plan",
-    "description": (
-        "Submit the complete arrival orchestration response, including cross-visit "
-        "guest synthesis, a fully grounded arrival plan with role-specific briefings, "
-        "and a tasteful-restraint suppression list of withheld suggestions with reasons."
-    ),
+    "description": "Submit the complete arrival orchestration response.",
     "input_schema": {
         "type": "object",
         "required": ["synthesis", "arrival_plan", "suppressions"],
@@ -58,26 +54,17 @@ _TOOL_SCHEMA = {
                 "properties": {
                     "unified_understanding": {
                         "type": "string",
-                        "description": (
-                            "2–4 sentence prose: what the system infers cross-visit "
-                            "about this guest's patterns, needs, and this arrival context."
-                        ),
+                        "description": "2 sentences: cross-visit pattern inference for this guest and arrival.",
                     },
                     "inferred_preferences": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": (
-                            "3–6 bullet strings: specific inferred preferences "
-                            "drawn from cross-property observations."
-                        ),
+                        "description": "3–4 short bullet strings of specific inferred preferences from prior stays.",
                     },
                     "provenance_properties": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": (
-                            "List of property_id strings that contributed prior-stay "
-                            "observations to this synthesis."
-                        ),
+                        "description": "property_id strings that contributed prior-stay observations.",
                     },
                 },
             },
@@ -87,15 +74,11 @@ _TOOL_SCHEMA = {
                 "properties": {
                     "mood": {
                         "type": "string",
-                        "description": (
-                            "One-word arrival mood classifier. Must be one of: "
-                            "Quiet, Restorative, Recovery, Celebratory, Work-Mode, "
-                            "Family Landing, Exploratory."
-                        ),
+                        "description": "One of: Quiet, Restorative, Recovery, Celebratory, Work-Mode, Family Landing, Exploratory.",
                     },
                     "role_cards": {
                         "type": "array",
-                        "description": "Exactly 6 role cards — one per role listed.",
+                        "description": "Exactly 6 role cards.",
                         "items": {
                             "type": "object",
                             "required": [
@@ -107,29 +90,21 @@ _TOOL_SCHEMA = {
                             "properties": {
                                 "role": {
                                     "type": "string",
-                                    "description": (
-                                        "Role name. Must be one of: Front Desk, "
-                                        "Concierge, Spa, Dining, Housekeeping, "
-                                        "Guest Experience."
-                                    ),
+                                    "description": "One of: Front Desk, Concierge, Spa, Dining, Housekeeping, Guest Experience.",
                                 },
                                 "briefing": {
                                     "type": "string",
-                                    "description": (
-                                        "2–4 sentence prose briefing. Must reference "
-                                        "specific guest details or named property anchors — "
-                                        "not generic copy."
-                                    ),
+                                    "description": "1–2 sentence staff briefing. Must name a specific guest detail or property anchor.",
                                 },
                                 "priority_actions": {
                                     "type": "array",
                                     "items": {"type": "string"},
-                                    "description": "3–5 specific, actionable bullet strings.",
+                                    "description": "3 short imperative action bullets.",
                                 },
                                 "suppressed": {
                                     "type": "array",
                                     "items": {"type": "string"},
-                                    "description": "Items explicitly NOT to offer this guest.",
+                                    "description": "Items NOT to offer this guest.",
                                 },
                             },
                         },
@@ -137,42 +112,29 @@ _TOOL_SCHEMA = {
                     "suppression": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "Global do-not-offer list (union across all roles).",
+                        "description": "Global do-not-offer list.",
                     },
                     "guest_message": {
                         "type": "string",
-                        "description": (
-                            "Personalised welcome note for the guest — 2–3 sentences, "
-                            "specific to their dossier and current arrival context."
-                        ),
+                        "description": "1–2 sentence personalised welcome note grounded in the dossier.",
                     },
                 },
             },
             # BL-006: suppressions — SEPARATE from arrival_plan; never enters diff()
             "suppressions": {
                 "type": "array",
-                "description": (
-                    "2–4 items the system chose NOT to suggest, with concierge-framed reasons. "
-                    "Each item is a withheld suggestion — experiences or offerings that were "
-                    "considered but suppressed based on the guest's inferred profile. "
-                    "Frame reasons as 'why we held this back', not as criticism. "
-                    "Examples: group tours held for a solo decompressor; arrival-day spa held "
-                    "because guest is fatigued from a red-eye."
-                ),
+                "description": "2–3 withheld suggestions with concierge-framed reasons (why we held back).",
                 "items": {
                     "type": "object",
                     "required": ["suggestion", "reason"],
                     "properties": {
                         "suggestion": {
                             "type": "string",
-                            "description": "The withheld suggestion (e.g. 'Group tours / guided excursions').",
+                            "description": "The withheld offering (e.g. 'Group cycling tour').",
                         },
                         "reason": {
                             "type": "string",
-                            "description": (
-                                "One-sentence concierge-framed reason why this was withheld "
-                                "(e.g. 'solo decompressor — guided programming is the wrong energy for this arrival')."
-                            ),
+                            "description": "One-sentence reason drawn from dossier evidence.",
                         },
                     },
                 },
@@ -184,29 +146,19 @@ _TOOL_SCHEMA = {
 _SYSTEM_PROMPT = """\
 You are the SenseArrival orchestration engine for Rosewood Hotels & Resorts.
 
-Your task is to read a guest dossier and arrival property card (and optionally provenance property \
-cards from prior stays) and produce a fully grounded, schema-valid arrival plan for the hotel team.
+Read the guest dossier and property cards, then call submit_arrival_plan exactly once. No other output.
 
-Rules:
-1. Every role card briefing MUST reference specific guest details from the dossier OR named anchors \
-   from the arrival property card. No generic copy. If you reference a wine experience, name it. \
-   If you reference a cycling route, name it.
-2. The mood must match the guest's profile and arrival context. Arriving tired after a red-eye = \
-   Restorative or Recovery. Business focus = Work-Mode. Family group = Family Landing.
-3. The synthesis unified_understanding must draw on cross-property observations from prior stays — \
-   do not invent preferences not evidenced in the dossier.
+Rules (non-negotiable):
+1. Briefings: name a specific guest detail OR named property anchor (Asaya Spa, Madera, Bluejay Bikes, \
+   Old La Honda Road, Ridge Rosé Reveal, Flamingo Estate Afternoon Tea, Friday Nights at Madera). \
+   No generic copy.
+2. Mood: match guest profile + arrival context (tired red-eye → Restorative/Recovery; \
+   business → Work-Mode; family → Family Landing).
+3. Synthesis: draw only from evidenced cross-property observations. Do not invent.
 4. Exactly 6 role cards: Front Desk, Concierge, Spa, Dining, Housekeeping, Guest Experience.
-5. At least 2 outputs must name specific Rosewood Sand Hill anchors from the property card \
-   (e.g. Asaya Spa, Madera, Ridge Rosé Reveal, Bluejay Bikes, Old La Honda Road, Friday Nights at Madera, \
-   Flamingo Estate Afternoon Tea) — contextually appropriate, not generic name-drops.
-6. The suppressions list MUST contain 2–4 items that the system chose NOT to suggest. These are \
-   offerings that were considered but withheld based on the guest's inferred profile and arrival context. \
-   Frame each reason from the hotel's perspective: "why we held this back." This is the "tasteful restraint" \
-   signal — the difference between knowing a guest and surveilling them. Be specific: name the offering \
-   (e.g. "Flamingo Estate Afternoon Tea", "Stanford campus tour", "Group cycling tour") and give a \
-   one-sentence reason drawn from the dossier evidence (e.g. "solo decompressor — guided programming \
-   conflicts with her attested pattern of self-directing downtime").
-7. Call submit_arrival_plan exactly once with your complete response. Do not produce any other output.
+5. Suppressions: 2–3 named offerings withheld, each with a one-sentence dossier-grounded reason. \
+   Frame as hotel perspective ("why we held this back").
+6. Be terse. Briefings: 1–2 sentences. Actions: short imperatives. Guest message: 1–2 sentences.
 """
 
 
@@ -291,29 +243,163 @@ def _parse_tool_response(response: anthropic.types.Message) -> OrchestratorRespo
     Raises ValueError if the tool call is absent or the schema is invalid.
     Applies TD-011 backfill to ensure exactly 6 role cards.
     """
+    # Haiku may split required fields across multiple submit_arrival_plan calls.
+    # Merge all such blocks into one combined dict before parsing.
+    merged: dict = {}
     for block in response.content:
         if block.type == "tool_use" and block.name == "submit_arrival_plan":
             data = block.input
-            synthesis = GuestSynthesis(**data["synthesis"])
-            plan_data = data["arrival_plan"]
-            role_cards = [RoleCard(**rc) for rc in plan_data["role_cards"]]
-            # TD-011: backfill any missing roles to guarantee 6-card grid
-            role_cards = _backfill_role_cards(role_cards)
-            arrival_plan = ArrivalPlan(
-                mood=plan_data["mood"],
-                role_cards=role_cards,
-                suppression=plan_data.get("suppression", []),
-                guest_message=plan_data.get("guest_message", ""),
+            if not data:
+                # Empty block (truncation artifact) — skip
+                continue
+            merged.update(data)
+
+    if not merged:
+        raise ValueError("No submit_arrival_plan tool call found in Claude response.")
+
+    # Fix A: arrival_plan must be present and usable; synthesis is now OPTIONAL.
+    # Haiku intermittently omits the synthesis block but returns a complete arrival_plan.
+    # Raising on a missing synthesis block was destroying correct selected-guest plans.
+    if "arrival_plan" not in merged:
+        raise ValueError(
+            f"Incomplete submit_arrival_plan response (keys={list(merged.keys())}); "
+            "arrival_plan missing — likely truncation."
+        )
+    # Check arrival_plan has minimum required fields (mood + role_cards)
+    plan_check = merged.get("arrival_plan", {})
+    if not isinstance(plan_check, dict) or not plan_check.get("mood") or not plan_check.get("role_cards"):
+        raise ValueError(
+            f"arrival_plan present but unusable (mood/role_cards missing); "
+            f"keys={list(plan_check.keys()) if isinstance(plan_check, dict) else type(plan_check).__name__}"
+        )
+
+    data = merged
+
+    # Fix A: Robust synthesis parsing — Haiku intermittently omits synthesis entirely.
+    # When absent, construct a minimal degraded GuestSynthesis from available context.
+    # synthesis is secondary UI context only; it is EXCLUDED from diff() — degrading it is spine-safe.
+    if "synthesis" not in data:
+        # Synthesis block entirely absent (the bug root cause): degrade gracefully.
+        # Derive unified_understanding from guest_message if present, else neutral placeholder.
+        guest_msg_hint = ""
+        try:
+            guest_msg_hint = data["arrival_plan"].get("guest_message", "")
+        except Exception:
+            pass
+        degraded_understanding = (
+            f"[Synthesis unavailable — derived from arrival plan] {guest_msg_hint}".strip()
+            if guest_msg_hint
+            else "Guest synthesis unavailable for this visit (model omitted secondary block)."
+        )
+        logger.warning(
+            "_parse_tool_response: synthesis block absent from Claude response; "
+            "constructing degraded GuestSynthesis — arrival_plan is intact and will be used."
+        )
+        raw_synthesis = {
+            "unified_understanding": degraded_understanding,
+            "inferred_preferences": [],
+            "provenance_properties": [],
+        }
+    else:
+        raw_synthesis = data["synthesis"]
+        if not isinstance(raw_synthesis, dict):
+            # String fallback: treat as unified_understanding
+            logger.warning(
+                "_parse_tool_response: synthesis is %s not dict; wrapping as unified_understanding",
+                type(raw_synthesis).__name__,
             )
-            # BL-006: parse suppressions — SEPARATE field, never enters diff()
-            raw_suppressions = data.get("suppressions", [])
-            suppressions = [Suppression(**s) for s in raw_suppressions]
-            return OrchestratorResponse(
-                synthesis=synthesis,
-                arrival_plan=arrival_plan,
-                suppressions=suppressions,
+            raw_synthesis = {
+                "unified_understanding": str(raw_synthesis),
+                "inferred_preferences": [],
+                "provenance_properties": [],
+            }
+    # Ensure required sub-keys are present
+    raw_synthesis.setdefault("unified_understanding", "Guest synthesis unavailable.")
+    raw_synthesis.setdefault("inferred_preferences", [])
+    raw_synthesis.setdefault("provenance_properties", [])
+    synthesis = GuestSynthesis(**raw_synthesis)
+
+    plan_data = data["arrival_plan"]
+    role_cards = [RoleCard(**rc) for rc in plan_data["role_cards"]]
+    # TD-011: backfill any missing roles to guarantee 6-card grid
+    role_cards = _backfill_role_cards(role_cards)
+
+    # Fix D: Normalize arrival_plan["suppression"] → list[str].
+    # Haiku occasionally emits {suggestion:..., reason:...} dicts here instead of strings.
+    # Coerce each item to str so ArrivalPlan(**) never raises ValidationError on this field.
+    raw_plan_suppression = plan_data.get("suppression", [])
+    if not isinstance(raw_plan_suppression, list):
+        raw_plan_suppression = []
+    coerced_plan_suppression: list[str] = []
+    for item in raw_plan_suppression:
+        if isinstance(item, str):
+            coerced_plan_suppression.append(item)
+        elif isinstance(item, dict):
+            # Haiku confused the two suppression fields: flatten dict to string
+            suggestion = item.get("suggestion", "")
+            reason = item.get("reason", "")
+            if suggestion and reason:
+                flat = f"{suggestion} — {reason}"
+            elif suggestion:
+                flat = suggestion
+            elif reason:
+                flat = reason
+            else:
+                flat = str(item)
+            logger.warning(
+                "Fix D: arrival_plan.suppression item was dict %r; flattened to %r",
+                item,
+                flat,
             )
-    raise ValueError("No submit_arrival_plan tool call found in Claude response.")
+            coerced_plan_suppression.append(flat)
+        else:
+            logger.warning(
+                "Fix D: arrival_plan.suppression item uncoercible (%s); skipped",
+                type(item).__name__,
+            )
+
+    arrival_plan = ArrivalPlan(
+        mood=plan_data["mood"],
+        role_cards=role_cards,
+        suppression=coerced_plan_suppression,
+        guest_message=plan_data.get("guest_message", ""),
+    )
+
+    # Fix D: Normalize top-level suppressions → valid list[Suppression] inputs.
+    # Haiku sometimes emits bare strings here instead of {suggestion, reason} dicts.
+    # Wrap strings; skip/normalise anything else — never let a str reach Suppression(**s).
+    raw_suppressions = data.get("suppressions", [])
+    if not isinstance(raw_suppressions, list):
+        raw_suppressions = []
+    suppressions: list[Suppression] = []
+    for s in raw_suppressions:
+        if isinstance(s, dict) and "suggestion" in s and "reason" in s:
+            suppressions.append(Suppression(**s))
+        elif isinstance(s, dict):
+            # Partial dict: fill missing keys with empty string
+            suggestion = s.get("suggestion") or s.get("suggestion", "")
+            reason = s.get("reason", "")
+            logger.warning(
+                "Fix D: suppressions item partial dict %r; wrapping with defaults", s
+            )
+            suppressions.append(Suppression(suggestion=str(suggestion), reason=str(reason)))
+        elif isinstance(s, str):
+            # Bare string: Haiku confused the field with arrival_plan.suppression
+            logger.warning(
+                "Fix D: suppressions item was bare str %r; wrapping as suggestion", s
+            )
+            suppressions.append(Suppression(suggestion=s, reason=""))
+        else:
+            logger.warning(
+                "Fix D: suppressions item uncoercible (%s %r); skipped",
+                type(s).__name__,
+                s,
+            )
+    return OrchestratorResponse(
+        synthesis=synthesis,
+        arrival_plan=arrival_plan,
+        suppressions=suppressions,
+    )
 
 
 async def _call_claude(
@@ -324,33 +410,67 @@ async def _call_claude(
     session_observations: list[str] | None = None,
 ) -> OrchestratorResponse:
     """
-    Make a single Claude tool-use call and return a validated OrchestratorResponse.
+    Make a Claude tool-use call and return a validated OrchestratorResponse.
     Falls back to the offline fixture if parsing fails (graceful degradation — TREQ-014).
+
+    TD-010 fix: uses AsyncAnthropic + await so the event loop is never blocked.
+    Model: claude-haiku-4-5-20251001 — fastest available; ~87–100 tok/s vs Sonnet ~47 tok/s.
+    max_tokens: 4096 — bumped from 3072 to give Haiku room to emit all blocks reliably.
+    Timeout: 35s — measured wall time ~24s; 35s gives headroom + fast degradation on failure.
+    max_retries=0 — we implement a single explicit retry ourselves (Fix B).
+
+    Fix A: synthesis absence is now non-fatal in _parse_tool_response.
+    Fix B: one bounded retry before degrading to fixture (non-deterministic Haiku benefits
+           from a second attempt; hard cap at 1 retry, total worst-case ≈ 2 attempts).
+    Fix C: fixture fallback carries is_fallback_fixture=True so the UI shows an honesty marker.
     """
-    client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+    client = anthropic.AsyncAnthropic(
+        api_key=settings.anthropic_api_key,
+        timeout=35.0,
+        max_retries=0,
+    )
 
     human_content = _build_prompt_blocks(
         dossier_md, arrival_property_md, provenance_mds, delay_event, session_observations
     )
 
-    try:
-        response = client.messages.create(
-            model="claude-opus-4-5",
-            max_tokens=4096,
-            system=_SYSTEM_PROMPT,
-            tools=[_TOOL_SCHEMA],
-            tool_choice={"type": "any"},
-            messages=[{"role": "user", "content": human_content}],
-        )
-        return _parse_tool_response(response)
-    except Exception as exc:
-        logger.error(
-            "Claude plan() call failed (%s: %s); falling back to offline fixture.",
-            type(exc).__name__,
-            exc,
-        )
-        # Graceful degradation: return fixture so the render never crashes (TREQ-014)
-        return load_offline_response(replanned=bool(delay_event))
+    last_exc: Exception | None = None
+    for attempt in range(2):  # Fix B: attempt 0 = first try; attempt 1 = one bounded retry
+        try:
+            response = await client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=4096,
+                system=_SYSTEM_PROMPT,
+                tools=[_TOOL_SCHEMA],
+                tool_choice={"type": "any"},
+                messages=[{"role": "user", "content": human_content}],
+            )
+            return _parse_tool_response(response)
+        except Exception as exc:
+            last_exc = exc
+            if attempt == 0:
+                logger.warning(
+                    "Claude call attempt 1 failed (%s: %s); retrying once before fixture fallback.",
+                    type(exc).__name__,
+                    exc,
+                )
+            else:
+                logger.error(
+                    "Claude call attempt 2 failed (%s: %s); falling back to offline fixture.",
+                    type(exc).__name__,
+                    exc,
+                )
+
+    # Fix C: both attempts failed — degrade to fixture but flag it as a fallback.
+    # is_fallback_fixture=True so the template renders the honesty marker.
+    # REPLAY/OFFLINE_MODE intentional path never reaches here — its is_fallback_fixture stays False.
+    fallback = load_offline_response(replanned=bool(delay_event))
+    return OrchestratorResponse(
+        synthesis=fallback.synthesis,
+        arrival_plan=fallback.arrival_plan,
+        suppressions=fallback.suppressions,
+        is_fallback_fixture=True,
+    )
 
 
 async def _call_ollama(

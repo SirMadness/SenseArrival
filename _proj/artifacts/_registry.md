@@ -12,9 +12,9 @@
 
 ## Quick Stats
 
-- **Total Reports**: 21
+- **Total Reports**: 23
 - **Active Work**: 0
-- **Completed This Week**: 21
+- **Completed This Week**: 23
 - **Last Updated**: 2026-05-16
 
 ---
@@ -32,6 +32,8 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| select-guest-reliability-fix-20260516 | implementation | engineer | 2026-05-16 | Fix /select silent-wrong-guest + reliability. Fix A: missing synthesis non-fatal (degrade, keep real arrival_plan). Fix B: 1 bounded retry pre-fallback. Fix C: fixture fallback tagged is_fallback_fixture -> red honesty banner (never silent; REPLAY stays False/gold banner). Fix D: normalize Haiku's mis-shaped arrival_plan.suppression(list[str]) & suppressions(list[Suppression]). Verified 22/22 live clean across 3 guests (was ~15-25% fallback); diff spine 36 entries + REPLAY zero-network intact; 4 code files, main.py==HEAD, no commit. Code-quality PASS WITH TECH DEBT (TD-022 Ollama gap deferred, off rehearsed path). | tags: claude,haiku,select,reliability,parser-robustness,honest-fallback,spine-safe |
+| live-latency-fix-20260516 | implementation | engineer | 2026-05-16 | Honest-live latency fix: Opus->Haiku-4.5, AsyncAnthropic (TD-010), terser tool-schema/system-prompt (~3500->~2100 out tok), 35s timeout/max_retries=0 fast graceful fallback. Live plan 22s / replan 28s (was ~55-80s frozen) genuinely grounded; diff spine 36 entries intact; /select fixed all guests; main.py==HEAD; offline zero-network unchanged. orchestrator.py only, no commit. | tags: claude,latency,td-010,async,haiku,spine-safe |
 | playbook-final-2026-05-16 | implementation | docs | 2026-05-16 | Final presenter-ready demo-playbook: 2 DQ-blocking user actions at top, smoke-verified 6-step 3:05 script, corrected cut order (suppression/synthesis/TTS BUILT; /select DO-NOT-OPEN; Tier-3 entry), Q&A |
 | final-offline-smoke-2026-05-16 | tests | code-quality | 2026-05-16 | VERDICT DEMO-READY — full rehearsed OFFLINE path verified 9/9 PASS, zero-network proven (8 code paths), <20ms responses, HTMX local, never-cut diff has no synthesis/suppression keys; verified click sequence produced; 1 LOW (generic Spa diff reason) |
 | ADR-001-amendment-live-default-2026-05-16-2026-05-16 | architecture | architect | 2026-05-16 | ADR-001 amendment: corrected demo-mode default — live Claude+ElevenLabs is primary/showcased path (TREQ-013 Tier-1), OFFLINE_MODE/replay reframed as rehearsed network fallback not default; auditable dated amendment note added, Status stays Accepted, stack/routes/cut-order untouched; consistent w/ ADR-002 Delta 5 |

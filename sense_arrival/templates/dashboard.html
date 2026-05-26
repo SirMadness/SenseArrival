@@ -13,6 +13,10 @@
 <div class="offline-banner">
   OFFLINE MODE — fixture replay active (ms-chen @ rosewood-sand-hill)
 </div>
+{% elif response and response.is_fallback_fixture %}
+<div class="fallback-banner">
+  Live generation unavailable — showing reference example (ms-chen @ rosewood-sand-hill). The plan below is not for the requested guest.
+</div>
 {% endif %}
 
 <header>
