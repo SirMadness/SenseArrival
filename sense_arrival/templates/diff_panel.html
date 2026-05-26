@@ -1,0 +1,50 @@
+{% if diff and diff.entries %}
+<section id="diff-panel" class="diff-panel">
+  <div class="diff-panel-header">
+    <h2 class="diff-panel-title">What Changed &amp; Why</h2>
+    <span class="diff-panel-meta">
+      {{ diff.changed_roles | length }} role{{ 's' if diff.changed_roles | length != 1 }} updated
+      &middot; {{ diff.entries | length }} action{{ 's' if diff.entries | length != 1 }} changed
+    </span>
+  </div>
+
+  <div class="diff-trigger-banner">
+    <span class="diff-trigger-label">TRIGGER</span>
+    <span class="diff-trigger-text">{{ diff.entries[0].trigger if diff.entries else "" }}</span>
+  </div>
+
+  <div class="diff-entries">
+    {% set ns = namespace(current_role="") %}
+    {% for entry in diff.entries %}
+      {% if entry.role != ns.current_role %}
+        {% set ns.current_role = entry.role %}
+        <div class="diff-role-label">{{ entry.role | upper }}</div>
+      {% endif %}
+      <div class="diff-entry diff-entry--{{ entry.change_type }}">
+        <div class="diff-entry-badge">
+          {% if entry.change_type == "added" %}
+            <span class="diff-badge diff-badge--added">+ NEW</span>
+          {% else %}
+            <span class="diff-badge diff-badge--removed">&#8722; OUT</span>
+          {% endif %}
+        </div>
+        <div class="diff-entry-content">
+          <div class="diff-entry-action">{{ entry.action }}</div>
+          <div class="diff-entry-reason">{{ entry.reason }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="diff-rationale">{{ diff.rationale }}</div>
+</section>
+{% elif diff and not diff.entries %}
+<section id="diff-panel" class="diff-panel diff-panel--no-changes">
+  <h2 class="diff-panel-title">What Changed &amp; Why</h2>
+  <p class="diff-no-changes">No action-level changes detected between baseline and re-plan.</p>
+</section>
+{% else %}
+<section id="diff-panel" class="diff-panel diff-panel--pending">
+  <p>Run <strong>Inject Delay &amp; Re-plan</strong> to see what changed.</p>
+</section>
+{% endif %}

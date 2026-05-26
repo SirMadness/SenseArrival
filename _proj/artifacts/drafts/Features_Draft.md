@@ -55,3 +55,17 @@
 - **Status:** MIGRATED
 - **Priority:** P0
 - **Description:** Public repo + README naming Problem Statement #1 and built-today scope (disqualification guard), plus the 3-min demo script, cut order, backup assets, and a tested offline rehearsal before the judging room.
+
+## FEAT-008
+- **Title:** Portfolio Guest Graph & Cross-Visit Synthesis
+- **Requirements:** TREQ-020, TREQ-021, TREQ-023
+- **Status:** MIGRATED
+- **Priority:** P0
+- **Description:** Guest dossiers (profile + cross-property prior stays carrying each site's staff observations) + a per-property "sense of place" card library that captures the destination's local culture & activities, Markdown-source and template-driven. The orchestrator synthesizes a unified cross-visit guest understanding that informs the arrival and is surfaced explicitly ("inferred from prior stays"). Includes the live staff-observation → dossier demo-shim loop (TREQ-023, reuses the FEAT-004 voice/typed capture path). Widened scope guard: 3 dossiers / 3 properties, fixtures only, single rehearsed demo path. The headline creativity feature — strictly behind the never-cut spine.
+
+## FEAT-009
+- **Title:** Interactive Fixture Selector (demo-optional)
+- **Requirements:** TREQ-022
+- **Status:** MIGRATED
+- **Priority:** P1
+- **Description:** Thin guest/property picker that swaps the loaded dossier/property and re-runs the plan via the existing render path. Lets the builder tune and pick the final demo profile and show multi-property on request. Cuttable; the rehearsed demo stays single-path. Not a CRUD/authoring/chat-edit UI.

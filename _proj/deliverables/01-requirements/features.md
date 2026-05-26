@@ -1,4 +1,4 @@
-> **Version:** v001.01
+> **Version:** v001.02
 > **Last updated:** 2026-05-16
 > **Source of truth** for Execution phase. History: [archive/](archive/)
 
@@ -36,10 +36,10 @@
 
 ## FEAT-005
 - **Title:** Resilient Runtime & Stack
-- **Requirements:** TREQ-012, TREQ-013, TREQ-016
+- **Requirements:** TREQ-012, TREQ-013, TREQ-019
 - **Status:** LOCKED
 - **Priority:** P0
-- **Description:** Python/FastAPI/HTMX single-process app with a 3-tier pluggable LLM backend (Claude → Ollama → fixtures) and a scope guard (one persona, fixtures only, no live APIs). Removes the largest live-demo failure modes.
+- **Description:** Python/FastAPI/HTMX single-process app with a 3-tier pluggable LLM backend (Claude → Ollama → fixtures) and a widened scope guard (TREQ-019: fixed 3-dossier/3-property Markdown fixture library, fixtures only, no live APIs, single rehearsed demo path). Removes the largest live-demo failure modes; the fixture library must load before orchestration.
 
 ## FEAT-006
 - **Title:** Demo Dashboard UI
@@ -50,7 +50,21 @@
 
 ## FEAT-007
 - **Title:** Hackathon Compliance & Demo Readiness
-- **Requirements:** TREQ-015, TREQ-017
+- **Requirements:** TREQ-015, TREQ-017, TREQ-024
 - **Status:** LOCKED
 - **Priority:** P0
-- **Description:** Public repo + README naming Problem Statement #1 and built-today scope (disqualification guard), plus the 3-min demo script, cut order, backup assets, and a tested offline rehearsal before the judging room.
+- **Description:** Public repo + README naming Problem Statement #1 and built-today scope (disqualification guard), framed around the dual-card model validated with Rosewood's president (TREQ-024), plus the 3-min demo script, cut order, backup assets, and a tested offline rehearsal before the judging room.
+
+## FEAT-008
+- **Title:** Portfolio Guest Graph & Cross-Visit Synthesis
+- **Requirements:** TREQ-020, TREQ-021, TREQ-023
+- **Status:** LOCKED
+- **Priority:** P0
+- **Description:** Guest dossiers (profile + cross-property prior stays carrying each site's staff observations) + a per-property "sense of place" card library that captures the destination's local culture & activities, Markdown-source and template-driven. The orchestrator synthesizes a unified cross-visit guest understanding that informs the arrival and is surfaced explicitly ("inferred from prior stays"). Includes the live staff-observation → dossier demo-shim loop (TREQ-023, reuses the FEAT-004 voice/typed capture path). Widened scope guard governed by TREQ-019 (FEAT-005). The headline creativity feature — strictly behind the never-cut spine.
+
+## FEAT-009
+- **Title:** Interactive Fixture Selector (demo-optional)
+- **Requirements:** TREQ-022
+- **Status:** LOCKED
+- **Priority:** P1
+- **Description:** Thin guest/property picker that swaps the loaded dossier/property and re-runs the plan via the existing render path. Lets the builder tune and pick the final demo profile and show multi-property on request. Cuttable; the rehearsed demo stays single-path. Not a CRUD/authoring/chat-edit UI.

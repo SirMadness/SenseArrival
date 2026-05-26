@@ -12,19 +12,17 @@
 
 ## Quick Stats
 
-- **Status**: Not Started
-- **Total Phases**: 0
+- **Status**: Planning
+- **Total Phases**: 7
 - **Completed Phases**: 0
 - **Current Phase**: -
-- **Last Updated**: -
+- **Last Updated**: 2026-05-16
 
 ---
 
 ## Goal
 
-<!-- What are we building and why? One paragraph max. -->
-
-_No goal defined yet._
+Build SenseArrival 'First Five Minutes' arrival-choreography engine for Rosewood Sand Hill (Problem Statement #1): fixture-driven Pydantic/tool-use ArrivalPlan rendering 6 role cards + mood banner grounded in Sand Hill anchors, one-click delay re-plan with a never-cut what-changed diff, ElevenLabs TTS + typed/mic staff notes, 3-tier LLM resilience with offline replay — demo-ready before the hard 5PM submission.
 
 ---
 
@@ -32,7 +30,16 @@ _No goal defined yet._
 
 <!-- How do we know when we're done? Measurable outcomes. -->
 
-- [ ] _Define success criteria_
+
+- [ ] Baseline dashboard renders mood banner + all 6 role cards grounded in >=2 named Sand Hill anchors (US-001, US-008)
+
+- [ ] One-click delay injection re-plans in <~10s with a what-changed diff panel that renders even offline — NEVER CUT (US-002, US-003, TREQ-006)
+
+- [ ] Full demo (baseline -> re-plan -> diff -> >=1 TTS) runs end-to-end in fixture-replay mode with zero outbound calls (US-007)
+
+- [ ] Typed staff observation updates the correct role cards via the same endpoint that backs mic STT (US-004)
+
+- [ ] Public repo README names 'Problem Statement #1' + explicit built-today scope; offline rehearsal documented (US-009, TREQ-017)
 
 ---
 
@@ -42,7 +49,7 @@ _No active phase. Use the orchestrator in plan mode to create a plan, or add pha
 
 <!-- Example of an active phase:
 ### Phase 2: Authentication API
-- **Status**: In Progress
+- **Status**: Planning
 - **Agent**: engineer (backend mode)
 - **Started**: 2026-03-01
 - **Depends On**: Phase 1
@@ -61,9 +68,22 @@ _No active phase. Use the orchestrator in plan mode to create a plan, or add pha
 
 | # | Phase | Status | Agent | Depends On | Target |
 |---|-------|--------|-------|------------|--------|
-| - | _No phases defined_ | - | - | - | - |
 
 <!-- Example: | N | Phase name | Status | agent | Depends On | Target date | -->
+
+| 1 | Foundation & Runtime | Pending | engineer (backend) | none | TBD |
+
+| 2 | Arrival Orchestration Core | Pending | engineer (backend) | Phase 1 | TBD |
+
+| 3 | Delay-to-Delight Re-plan & Diff | Pending | engineer (fullstack) | Phase 2 | TBD |
+
+| 4 | Compliance & Demo Readiness | Pending | docs | Phase 3 | TBD |
+
+| 5 | Voice Layer | Pending | engineer (fullstack) | Phase 2 | TBD |
+
+| 6 | Originality & UI Polish | Pending | engineer (frontend) | Phase 5 | TBD |
+
+| 7 | Portfolio Guest Graph & Cross-Visit Synthesis | Pending | engineer (fullstack) | Phase 5 | TBD |
 
 ---
 
@@ -75,7 +95,7 @@ _No phase details yet._
 
 <!-- Example:
 ### Phase 2: Authentication API
-- **Status**: Pending
+- **Status**: Planning
 - **Agent**: engineer (backend)
 - **Depends On**: Phase 1
 - **Target**: 2026-04-15
@@ -83,7 +103,7 @@ _No phase details yet._
 - **Features**:
   - FEAT-005: User Registration (P0) — REQ-010
   - FEAT-006: Password Reset (P1) — REQ-011
-- **Backlog**: BL-005, BL-006
+- **Backlog**: BL-005, BL-006, BL-002
 - **Priority**: 1x P0, 1x P1
 -->
 
@@ -107,13 +127,23 @@ _No completed phases yet._
 
 <!-- Key decisions made during planning that affect execution. -->
 
-_No decisions recorded yet._
+
 
 <!-- Example:
 - **2026-03-01**: Using PostgreSQL over MongoDB — need ACID for financial transactions
 - **2026-03-02**: Targeting Python 3.12+ only — allows using match/case statements
 - **2026-03-03**: Auth tokens expire after 15 min — compliance requirement
 -->
+
+- **2026-05-16**: Re-discovery cycle 2 entered before any phase started — scope widening (portfolio guest graph + cross-visit synthesis). All 6 phases pending; backlog will be regenerated on /execute re-entry after reconciliation.
+
+- **2026-05-16**: Re-entry resequencing (cycle 2, user-approved at reconciliation lock): execution order = Phase1->2->3->4->5->7(FEAT-008 Portfolio Graph, depends Phase5 because TREQ-023 staff-note->dossier shim reuses the Voice path)->6(Polish, now also carries FEAT-009, runs last/cuttable). FEAT-008 STRICTLY behind never-cut spine BL-001->002->003. Analyst property-culture research (BL-010) runs in parallel from start, off critical path. BL-001 TREQ-016->TREQ-019; BL-002 +TREQ-020 grounding hook; BL-004 +TREQ-024 README framing — corrected TREQs injected fresh from v001.02 deliverables at delegation time (BL ref text is non-authoritative per agent-coordination).
+
+- **2026-05-16**: ADR-002 accepted (architecture gate cleared for BL-001/002). RECONCILE PENDING: ADR-002 used placeholder provenance fixture names rosewood-london.md/rosewood-beijing.md; analyst BL-010 was guided to The Carlyle (NY, Broadway/theatre — matches user's 'Annie' example) + Hotel de Crillon (Paris). On BL-010 return, rename ADR-002 provenance fixtures + offline-path comment to the analyst's chosen 2 properties (non-architectural edit; ADR-002 decisions unchanged).
+
+- **2026-05-16**: RECONCILE RESOLVED: provenance = The Carlyle (New York) + Rosewood Castiglion del Bosco (Tuscany); arrival-deep = Rosewood Sand Hill. Canonical demo guest = 'Ms. Chen' (preserves locked US-008) using analyst Dossier A demo-grade content (cyclist + wine-terroir + solo-decompressor + cultural appetite; prior stays Carlyle + Castiglion). Guests B/C = Priya Nair, James Okafor. Fixtures supersede ADR-002 placeholders: dossiers/{ms-chen,priya-nair,james-okafor}.md ; properties/{rosewood-sand-hill,the-carlyle-new-york,castiglion-del-bosco}.md ; offline canonical = ms-chen@rosewood-sand-hill. ADR-002 design decisions unchanged (names were illustrative).
+
+- **2026-05-16**: PROJECT LOCKED 2026-05-16: P0 set + dashboard polish (BL-007) + suppression (BL-006) complete & committed. BL-009 interactive selector CUT (demo-optional, per ADR-001 cut order, user-confirmed). Never-cut spine certified clean 6x. Proceeding to lock activities: final offline end-to-end smoke check + demo-playbook finalization. No further feature build.
 
 ---
 

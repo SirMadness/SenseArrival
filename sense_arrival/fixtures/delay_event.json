@@ -1,0 +1,14 @@
+{
+  "event_type": "flight_delay",
+  "guest_id": "ms-chen",
+  "original_arrival": "2024-11-14T15:30:00-08:00",
+  "revised_arrival": "2024-11-14T17:30:00-08:00",
+  "delay_minutes": 120,
+  "cause": "Connecting flight delay at JFK due to air traffic control hold",
+  "downstream_impacts": [
+    "Thursday 4 PM spa appointment window compressed or unavailable",
+    "Madera dinner timing shifts to 7:30 PM or later",
+    "Thursday evening programming should be minimal — guest will be fatigued"
+  ],
+  "notes": "Guest has not been notified; property tracking flight status via airline API. Do not contact guest during transit."
+}

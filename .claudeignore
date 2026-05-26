@@ -2,3 +2,7 @@
 _proj/user_notes/
 # Install backups — not indexed by Claude
 _proj/claude-backup/
+
+.venv
+
+.env

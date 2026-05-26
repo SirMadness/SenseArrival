@@ -1,0 +1,957 @@
+/* SenseArrival — room-legible dashboard styles (BL-007 polish) */
+
+:root {
+  --sand: #f5f0e8;
+  --rosewood: #8b3a3a;
+  --slate: #2c3e50;
+  --light-slate: #5d7a8a;
+  --card-bg: #ffffff;
+  --border: #ddd;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Georgia', serif;
+  background: var(--sand);
+  color: var(--slate);
+  line-height: 1.6;
+  padding: 0 1rem 2rem;
+  /* Slightly wider max to accommodate 3-panel grid cleanly at 1280–1440px */
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* Offline banner */
+.offline-banner {
+  background: #b8860b;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+}
+
+/* Live-path fallback honesty marker — distinct from offline banner */
+.fallback-banner {
+  background: #8b2500;
+  color: #fff3e0;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  font-weight: bold;
+}
+
+/* Header */
+header {
+  padding: 1.2rem 0 0.75rem;
+  border-bottom: 2px solid var(--rosewood);
+  margin-bottom: 1rem;
+}
+header h1 { font-size: 2rem; color: var(--rosewood); }
+.subtitle { color: var(--light-slate); font-style: italic; font-size: 0.9rem; }
+
+/* =========================================================================
+   THREE-PANEL LAYOUT (BL-007 / TREQ-018 / US-010)
+   Panel A: inputs/triggers (left column)
+   Panel B: mood + diff + suppression (middle column)
+   Panel C: role cards with Play Briefing (right column)
+   Synthesis + dossier panels span full width below the 3-panel grid.
+   ========================================================================= */
+
+/* Wrapper for the three-panel grid */
+#three-panel-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+/* Panel A — inputs/triggers column */
+.panel-inputs {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Panel B — mood + diff + suppression column */
+.panel-signals {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Panel C — role cards column */
+.panel-roles {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Fallback: stack panels vertically below 1100px to prevent horizontal scroll */
+@media (max-width: 1100px) {
+  #three-panel-grid {
+    grid-template-columns: 1fr;
+  }
+  .panel-inputs,
+  .panel-signals,
+  .panel-roles {
+    grid-column: 1;
+  }
+}
+
+/* Controls */
+.controls { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0; }
+
+.btn-primary {
+  background: var(--rosewood);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.4rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+.btn-primary:hover { opacity: 0.88; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--rosewood);
+  border: 2px solid var(--rosewood);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+.btn-secondary:hover { background: var(--rosewood); color: white; }
+
+/* Mood banner — high-contrast, readable from across a room */
+.mood-banner {
+  background: var(--rosewood);
+  color: white;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  margin-bottom: 0;
+}
+.mood-banner h2 { font-size: 1.1rem; }
+.mood { text-transform: capitalize; font-style: italic; font-size: 1.3rem; display: block; margin-top: 0.2rem; }
+
+/* Synthesis panel — BL-008, full-width below 3-panel grid */
+.synthesis-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.synthesis-panel--updated {
+  border-left: 4px solid #2a6e5c;
+  background: #f6fdfb;
+}
+.synthesis-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.synthesis-panel h2 {
+  font-size: 1rem;
+  color: var(--light-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+/* "Inferred from prior stays" badge in the synthesis panel header */
+.synthesis-source-badge {
+  font-size: 0.68rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: #2a6e5c;
+  color: white;
+  padding: 0.15rem 0.55rem;
+  border-radius: 3px;
+}
+.synthesis-source-badge--updated {
+  background: #1a4a2e;
+}
+.synthesis-understanding {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+  color: var(--slate);
+}
+.synthesis-prefs { margin: 0.5rem 0 0.5rem 1.2rem; }
+
+/* BL-008: Structured "inferred from prior stays" list */
+.inferred-from-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.inferred-item {
+  border-left: 3px solid #2a6e5c;
+  padding-left: 0.85rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+.inferred-item-text {
+  font-size: 0.92rem;
+  font-weight: bold;
+  color: var(--slate);
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+.inferred-item-source {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: baseline;
+  font-size: 0.78rem;
+}
+.inferred-from-label {
+  color: var(--light-slate);
+  font-style: italic;
+}
+.inferred-property-tag {
+  background: #e8f0ec;
+  color: #1a4a2e;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.inferred-observation {
+  color: var(--light-slate);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.provenance {
+  font-size: 0.8rem;
+  color: var(--light-slate);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.provenance-tag {
+  background: #f0f0f0;
+  color: var(--slate);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* BL-008: Dossier panel — full-width below 3-panel grid (TREQ-023 / US-014) */
+.dossier-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid #5d7a8a;
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.dossier-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.dossier-header h2 {
+  font-size: 1rem;
+  color: var(--light-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+.dossier-live-badge {
+  font-size: 0.65rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: #5d7a8a;
+  color: white;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+}
+.dossier-empty-note {
+  font-size: 0.82rem;
+  color: var(--light-slate);
+  font-style: italic;
+}
+.dossier-observations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.dossier-obs-entry {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  background: #f4f8fc;
+  border: 1px solid #c8dce8;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+}
+.dossier-obs-num {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--light-slate);
+  white-space: nowrap;
+  padding-top: 0.05rem;
+  min-width: 22px;
+}
+.dossier-obs-text {
+  font-size: 0.875rem;
+  color: var(--slate);
+  line-height: 1.45;
+}
+
+/* Role cards — panel C, stacked vertically */
+.panel-roles-header {
+  font-size: 0.85rem;
+  color: var(--light-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0;
+  font-weight: bold;
+}
+
+/* Keep #role-cards as the HTMX OOB swap target — no grid layout on it */
+#role-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.role-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+}
+.role-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  gap: 0.5rem;
+}
+/* Larger role name — readable from across a room */
+.role-card h3 { color: var(--rosewood); font-size: 1rem; line-height: 1.3; }
+
+/* Play Briefing button — single-click, visually obvious (US-010) */
+.tts-btn {
+  background: var(--rosewood);
+  border: none;
+  color: white;
+  padding: 0.35rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: bold;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tts-btn:hover { opacity: 0.85; }
+
+.actions { margin: 0.4rem 0 0.4rem 1.1rem; font-size: 0.88rem; }
+.suppressed summary { cursor: pointer; font-size: 0.82rem; color: var(--light-slate); margin-top: 0.4rem; }
+.suppressed ul { margin: 0.25rem 0 0 1.1rem; font-size: 0.82rem; color: var(--light-slate); }
+
+/* Front Desk card — structured arrival summary (US-001) */
+.role-card--front-desk {
+  border-left: 4px solid var(--rosewood);
+  background: #fdfaf6;
+}
+.fd-summary {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+.fd-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+  align-items: flex-start;
+}
+.fd-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--light-slate);
+  min-width: 110px;
+  padding-top: 0.1rem;
+}
+.fd-value {
+  font-weight: bold;
+  color: var(--rosewood);
+  font-style: italic;
+}
+.fd-actions, .fd-suppressed {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+}
+.fd-row--suppressed .fd-label { color: #b8860b; }
+.fd-row--suppressed .fd-suppressed { color: #8a6020; }
+
+/* Panel label style — used in Panel A section headers */
+.panel-label {
+  font-size: 0.78rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--light-slate);
+  margin-bottom: 0.35rem;
+}
+
+/* Panel A card wrapper — inputs/triggers */
+.panel-a-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+.panel-a-card h2 {
+  font-size: 0.85rem;
+  color: var(--light-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+}
+
+/* Tasteful Restraint / Suppression panel — BL-006 / TREQ-007 / US-006 */
+/* Renders from OrchestratorResponse.suppressions — structurally excluded from diff() */
+.suppression-panel {
+  background: #fff8f0;
+  border: 1px solid #e8c8a0;
+  border-left: 4px solid #b8860b;
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin-bottom: 0;
+}
+
+/* Suppression panel header row */
+.suppression-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+.suppression-panel h2 {
+  font-size: 0.85rem;
+  color: #b8860b;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0;
+}
+
+/* "What we chose not to offer" badge in the panel header */
+.suppression-badge {
+  font-size: 0.62rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: #b8860b;
+  color: white;
+  padding: 0.12rem 0.5rem;
+  border-radius: 3px;
+}
+
+/* Intro line — concierge framing */
+.suppression-intro {
+  font-size: 0.78rem;
+  color: #8a6020;
+  font-style: italic;
+  margin-bottom: 0.65rem;
+}
+
+/* Container for suppression items */
+.suppression-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* Individual suppression item — withheld suggestion + reason */
+.suppression-item {
+  border-left: 3px solid #d0a060;
+  padding-left: 0.75rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+
+/* The withheld suggestion text — prominent */
+.suppression-item-suggestion {
+  font-size: 0.88rem;
+  font-weight: bold;
+  color: #5a3a10;
+  line-height: 1.35;
+  margin-bottom: 0.2rem;
+}
+
+/* The concierge-framed reason — subdued, explanatory */
+.suppression-item-reason {
+  font-size: 0.8rem;
+  color: #8a6020;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Suppression placeholder — graceful empty state (TREQ-007 AC4) */
+.suppression-panel--placeholder {
+  background: #fdf8f2;
+  border: 1px dashed #d0b080;
+  border-left: 4px dashed #d0b080;
+}
+.suppression-panel--placeholder p {
+  font-size: 0.85rem;
+  color: #b8860b;
+  font-style: italic;
+}
+
+/* Guest message */
+.guest-message {
+  background: var(--card-bg);
+  border-left: 4px solid var(--rosewood);
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.guest-message h2 { font-size: 0.95rem; color: var(--light-slate); margin-bottom: 0.5rem; }
+blockquote { font-style: italic; line-height: 1.8; }
+
+/* Staff note — in Panel A (left column) */
+.staff-note {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-top: 0;
+}
+.staff-note h2 { font-size: 0.85rem; color: var(--light-slate); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem; font-weight: bold; }
+.staff-note-hint {
+  font-size: 0.78rem;
+  color: var(--light-slate);
+  font-style: italic;
+  margin-bottom: 0.6rem;
+}
+.staff-note textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.88rem;
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 0.45rem;
+  resize: vertical;
+}
+.staff-note-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+.obs-submit-btn {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.9rem;
+  width: auto;
+  display: inline-block;
+}
+.mic-btn {
+  font-size: 0.85rem;
+  width: auto;
+  display: inline-block;
+}
+
+/* Text-mode banner — visible when mic is unavailable (ADR-001 guard) */
+.text-mode-banner {
+  background: #b8860b;
+  color: white;
+  text-align: center;
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+
+/* =========================================================================
+   STAFF OBSERVATION FEEDBACK — BL-005
+   ========================================================================= */
+
+/* Observation receipt shown in #staff-note-result */
+.observation-receipt {
+  background: #f0f7ff;
+  border: 1px solid #b0cce8;
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+}
+.obs-transcript {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--slate);
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+}
+.obs-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.obs-badge {
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  color: white;
+}
+.obs-badge--spa            { background: #5c7a9e; }
+.obs-badge--dining         { background: #7a5c3a; }
+.obs-badge--concierge      { background: #3a6e5c; }
+.obs-badge--housekeeping   { background: #6e5c3a; }
+.obs-badge--front-desk     { background: var(--rosewood); }
+.obs-badge--dossier-observation { background: #4a5568; }
+.obs-count {
+  font-size: 0.78rem;
+  color: var(--light-slate);
+}
+.obs-loading {
+  font-style: italic;
+  color: var(--light-slate);
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+.observation-error {
+  color: #8a2a2a;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+/* Role card observation indicator — shown when role card has a noted observation */
+.obs-noted-badge {
+  display: inline-block;
+  background: #e8f4e8;
+  color: #2a7a3e;
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  margin-left: 0.4rem;
+  border: 1px solid #9ccc9c;
+}
+
+/* Role card — observation update highlight */
+.role-card--obs-updated {
+  border-left: 4px solid #2a7a3e;
+  background: #f6fdf8;
+}
+
+/* Selector panel */
+.selector-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.selector-panel label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+.selector-panel select {
+  display: block;
+  margin-top: 0.25rem;
+  padding: 0.4rem;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Placeholder */
+.placeholder {
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  color: var(--light-slate);
+}
+.placeholder h2 { color: var(--slate); margin-bottom: 0.75rem; }
+.placeholder code { background: #f0f0f0; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.85rem; }
+
+/* HTMX indicator */
+.htmx-indicator { display: none; }
+.htmx-request .htmx-indicator { display: inline; }
+
+/* =========================================================================
+   DELAY INJECTION UI — BL-003
+   ========================================================================= */
+
+/* Inject Delay button — largest, highest-contrast, single unmissable action in panel A */
+.btn-inject {
+  font-size: 1.15rem;
+  padding: 1rem 1.2rem;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  background: #6b2222;  /* deeper rosewood for maximum contrast */
+  border: 3px solid #3a0a0a;
+}
+
+/* In-progress spinner label next to the button */
+.replan-indicator {
+  font-style: italic;
+  color: var(--light-slate);
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+/* Delay injected confirmation banner */
+.delay-injected-banner {
+  background: #1a4a2e;
+  color: #a8e6bf;
+  padding: 0.65rem 1.2rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.delay-injected-icon {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Mood banner — replanned variant */
+.mood-banner--replanned {
+  background: #3d2b1a;
+}
+.mood-note {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Role card — changed highlight */
+.role-card--changed {
+  border-left: 4px solid #c0622a;
+  background: #fdf8f4;
+}
+.role-changed-badge {
+  display: inline-block;
+  background: #c0622a;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+
+/* =========================================================================
+   NEVER-CUT DIFF PANEL — TREQ-006 / US-003
+   Room-legible: readable from across a table in a judging room.
+   ========================================================================= */
+
+#diff-panel,
+.diff-panel {
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+
+.diff-panel--pending {
+  background: #f8f8f8;
+  border: 1px dashed #bbb;
+  padding: 1rem 1.5rem;
+  color: var(--light-slate);
+  font-style: italic;
+}
+
+.diff-panel--no-changes {
+  background: #f0f8f0;
+  border: 1px solid #9ccc9c;
+  padding: 1.2rem 1.5rem;
+}
+
+/* Main diff panel — high-contrast dark header */
+.diff-panel-header {
+  background: #1c2a38;
+  color: white;
+  padding: 1rem 1.5rem 0.75rem;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.diff-panel-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  color: white;
+}
+.diff-panel-meta {
+  font-size: 0.85rem;
+  color: #8ab0cc;
+  font-style: italic;
+}
+
+/* Trigger banner — single prominent line stating what triggered the re-plan */
+.diff-trigger-banner {
+  background: #c0622a;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.diff-trigger-label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.diff-trigger-text {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Diff entries container */
+.diff-entries {
+  background: #ffffff;
+  border: 1px solid #d0d8e0;
+  border-top: none;
+}
+
+/* Role group label — separates roles visually */
+.diff-role-label {
+  background: #eef2f6;
+  color: #3d5a72;
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 1.5rem;
+  border-top: 1px solid #d0d8e0;
+}
+.diff-role-label:first-child {
+  border-top: none;
+}
+
+/* Individual diff entry */
+.diff-entry {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #eaecee;
+  align-items: flex-start;
+}
+.diff-entry:last-child {
+  border-bottom: none;
+}
+
+/* Added entry — green left border */
+.diff-entry--added {
+  border-left: 4px solid #2a7a3e;
+  background: #f6fdf8;
+}
+
+/* Removed entry — warm red left border */
+.diff-entry--removed {
+  border-left: 4px solid #8a2a2a;
+  background: #fdf6f6;
+}
+
+/* Badge: + NEW / − OUT */
+.diff-entry-badge {
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}
+.diff-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.diff-badge--added {
+  background: #2a7a3e;
+  color: white;
+}
+.diff-badge--removed {
+  background: #8a2a2a;
+  color: white;
+}
+
+/* Entry content: action text + one-line reason */
+.diff-entry-content {
+  flex: 1;
+  min-width: 0;
+}
+.diff-entry-action {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--slate);
+  line-height: 1.4;
+  margin-bottom: 0.2rem;
+}
+.diff-entry-reason {
+  font-size: 0.82rem;
+  color: var(--light-slate);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+/* Rationale footer */
+.diff-rationale {
+  background: #f0f4f8;
+  border: 1px solid #d0d8e0;
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 0.7rem 1.5rem;
+  font-size: 0.82rem;
+  color: var(--light-slate);
+  font-style: italic;
+}

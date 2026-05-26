@@ -3,6 +3,15 @@
 ## Status
 Accepted
 
+### Amendment — 2026-05-16
+**What changed:** The demo-mode default posture in the "Fixture-Replay / Offline Mode" section was corrected. The original closing sentence implied offline mode was the default and live mode was the exception ("Switch to live mode only if the network is confirmed stable"). That sentence inverted the builder's actual intent.
+
+**Corrected posture:** The showcased demo runs **live** — Claude cloud + ElevenLabs TTS — as the primary, sponsor-aligned path (per TREQ-013, which designates Tier 1 / live API as "primary/showcased"). `OFFLINE_MODE` / fixture-replay is the **resilience fallback** for an unreliable judging-room network, not the default. The fallback is still rehearsed end-to-end before the judging room as the safety net; it remains a first-class engineering concern.
+
+**Compatibility:** ADR-002 Delta 5 ("Offline-Replay Canonical Path") already frames live mode as the richer multi-guest path and offline replay as the Ms. Chen @ Rosewood Sand Hill single-guest canonical path. This amendment is fully consistent with that framing; no change to ADR-002 is required.
+
+**Scope:** Wording correction to the Fixture-Replay / Offline Mode section only. Stack decision, dependencies, route table, cut order, and all other sections are unchanged.
+
 ## Context
 
 Solo builder, ~6-hour build window, hard 5:00 PM submission. Judging weights: 45% Live Demo, 35% Creativity/Originality, 20% Impact. A 3-minute demo in a judging room with unpredictable network and no guarantees on audio hardware. The product is an arrival choreography engine — not a chatbot — with structured role-card outputs, live re-plan diffs, ElevenLabs TTS playback, and browser mic STT for staff voice notes.
@@ -98,7 +107,7 @@ All Claude and ElevenLabs calls are gated by an `OFFLINE_MODE=true` env var (or 
 - STT returns a hardcoded transcript string.
 - The "Inject Delay" button still fires the re-plan route but serves the fixture diff instantly.
 
-This means the demo can run end-to-end with zero network. Test in offline mode before walking into the judging room. Switch to live mode only if the network is confirmed stable.
+This means the demo can run end-to-end with zero network. **The showcased demo runs live** — Claude cloud + ElevenLabs TTS is the primary, sponsor-aligned path (TREQ-013 designates Tier 1 as "primary/showcased"). Fixture-replay / `OFFLINE_MODE` is the **resilience fallback for a flaky judging-room network, not the default** — switch to it only if connectivity is unreliable at demo time. Rehearse the full fallback path (baseline → re-plan → diff → ≥1 TTS) end-to-end with zero outbound network before walking into the judging room, so the safety net is confirmed ready.
 
 ## Ruthless Cut Order
 
@@ -137,4 +146,4 @@ Run `mkdir sense_arrival && cd sense_arrival && python -m venv .venv && source .
 - No TypeScript type safety on the frontend; disciplined Pydantic models on the server compensate.
 - HTMX requires careful `hx-target` and `hx-swap` hygiene to avoid partial-update bugs; the mitigation is to keep fragment boundaries simple and test the re-plan swap early.
 - ElevenLabs STT via server proxy adds one network hop (browser → FastAPI → ElevenLabs); this is acceptable and keeps API keys server-side, which is correct practice.
-- Offline fixture replay is a first-class concern, not an afterthought — this is a feature, not a hack.
+- Offline fixture replay is a first-class engineering concern, not an afterthought — this is a feature, not a hack. It is framed as the resilience fallback (live mode is the showcased default); the fallback path is rehearsed before the judging room so it is confirmed ready. See Amendment 2026-05-16.

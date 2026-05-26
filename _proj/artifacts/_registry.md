@@ -12,10 +12,10 @@
 
 ## Quick Stats
 
-- **Total Reports**: 0
+- **Total Reports**: 23
 - **Active Work**: 0
-- **Completed This Week**: 0
-- **Last Updated**: -
+- **Completed This Week**: 23
+- **Last Updated**: 2026-05-16
 
 ---
 
@@ -32,6 +32,29 @@ _No active work._
 
 | Report | Category | Agent | Completed | Summary |
 |--------|----------|-------|-----------|---------|
+| select-guest-reliability-fix-20260516 | implementation | engineer | 2026-05-16 | Fix /select silent-wrong-guest + reliability. Fix A: missing synthesis non-fatal (degrade, keep real arrival_plan). Fix B: 1 bounded retry pre-fallback. Fix C: fixture fallback tagged is_fallback_fixture -> red honesty banner (never silent; REPLAY stays False/gold banner). Fix D: normalize Haiku's mis-shaped arrival_plan.suppression(list[str]) & suppressions(list[Suppression]). Verified 22/22 live clean across 3 guests (was ~15-25% fallback); diff spine 36 entries + REPLAY zero-network intact; 4 code files, main.py==HEAD, no commit. Code-quality PASS WITH TECH DEBT (TD-022 Ollama gap deferred, off rehearsed path). | tags: claude,haiku,select,reliability,parser-robustness,honest-fallback,spine-safe |
+| live-latency-fix-20260516 | implementation | engineer | 2026-05-16 | Honest-live latency fix: Opus->Haiku-4.5, AsyncAnthropic (TD-010), terser tool-schema/system-prompt (~3500->~2100 out tok), 35s timeout/max_retries=0 fast graceful fallback. Live plan 22s / replan 28s (was ~55-80s frozen) genuinely grounded; diff spine 36 entries intact; /select fixed all guests; main.py==HEAD; offline zero-network unchanged. orchestrator.py only, no commit. | tags: claude,latency,td-010,async,haiku,spine-safe |
+| playbook-final-2026-05-16 | implementation | docs | 2026-05-16 | Final presenter-ready demo-playbook: 2 DQ-blocking user actions at top, smoke-verified 6-step 3:05 script, corrected cut order (suppression/synthesis/TTS BUILT; /select DO-NOT-OPEN; Tier-3 entry), Q&A |
+| final-offline-smoke-2026-05-16 | tests | code-quality | 2026-05-16 | VERDICT DEMO-READY — full rehearsed OFFLINE path verified 9/9 PASS, zero-network proven (8 code paths), <20ms responses, HTMX local, never-cut diff has no synthesis/suppression keys; verified click sequence produced; 1 LOW (generic Spa diff reason) |
+| ADR-001-amendment-live-default-2026-05-16-2026-05-16 | architecture | architect | 2026-05-16 | ADR-001 amendment: corrected demo-mode default — live Claude+ElevenLabs is primary/showcased path (TREQ-013 Tier-1), OFFLINE_MODE/replay reframed as rehearsed network fallback not default; auditable dated amendment note added, Status stays Accepted, stack/routes/cut-order untouched; consistent w/ ADR-002 Delta 5 |
+| review-suppression-bl006-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut 6th cert CLEAN, offline determinism confirmed, US-006 met, no regressions; project CLEAR TO LOCK; 2 LOW no-action |
+| suppression-bl006-2026-05-16 | implementation | engineer | 2026-05-16 | Tasteful-restraint suppression: Suppression model as separate OrchestratorResponse field (mirrors GuestSynthesis, never in PlanDiff); 3 baseline / 4 replanned offline fixtures for Ms.Chen; concierge-framed panel fills BL-007 slot. Commit ea409a9 |
+| review-dashboard-polish-bl007-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — 4 TD fixes confirmed resolved; never-cut spine 5th cert clean; offline zero-network certified; US-010 legibility met; 2 LOW pre-existing carry-forward |
+| dashboard-polish-bl007-2026-05-16 | implementation | engineer | 2026-05-16 | Room-legible 3-panel dashboard (260px inputs | mood+diff+suppression | role cards w/ filled Play Briefing), no horiz scroll @1280-1440, empty-state suppression; resolved TD-014/017/009/016. Commit d9bd1d4 |
+| review-portfolio-synthesis-bl008-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut spine CERTIFIED CLEAN (4th, programmatic); offline zero-network + no-disk-write certified; 2 MED (HTML escape, offline single-guest synthesis) deferred; P0 set clear |
+| portfolio-synthesis-bl008-2026-05-16 | implementation | engineer | 2026-05-16 | Cross-visit synthesis (InferredPreference + GuestSynthesis.inferred_from): explicit 'inferred from prior stays' panel naming source property+observation; staff-note->dossier->re-synthesis OOB shim (in-memory); offline deterministic. Commit 0812575 |
+| review-voice-layer-bl005-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — offline zero-network CONFIRMED, never-cut spine CONFIRMED, TD-006 resolved; M-001 blank-submit + M-002 silent-frame + LOW select-args deferred; BL-008 clear |
+| voice-layer-bl005-2026-05-16 | implementation | engineer | 2026-05-16 | Voice layer: typed-text P0 path (classify->HTMX card update), ElevenLabs TTS Play Briefing reading current/re-planned briefing, mic STT P1 w/ guard+Text-mode fallback; offline cached m4a (TD-006). Commit 41bc223 |
+| compliance-readme-bl004-2026-05-16 | implementation | docs | 2026-05-16 | Public README (PS#1 named, dual-card model + Radha Arora validation, honest Built-Today scope, offline quickstart) + demo-playbook (3-min script, ADR-001 cut order never-cut TREQ-006, offline rehearsal). 2 user actions flagged: make repo public, capture backup assets |
+| review-delay-to-delight-bl003-2026-05-16 | tests | code-quality | 2026-05-16 | Never-cut invariant CERTIFIED CLEAN (7-path trace); TD-005/TD-011 verified resolved; 2 CRITICAL (CDN HTMX, unguarded diff) found+fixed in 3115007 + Main-verified |
+| delay-to-delight-bl003-2026-05-16 | implementation | engineer | 2026-05-16 | Never-cut Delay-to-Delight: 1-click delay->HTMX re-plan (no reload), room-legible what-changed diff (trigger+reason/change), clean deterministic offline fixtures; HTMX vendored local + diff routes guarded. Commits 62030fa,3115007 |
+| review-orchestration-bl002-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — never-cut spine verified intact end-to-end; structured-output fallback sound; 3-tier toggle clean; 2 MED + 3 LOW deferred |
+| orchestration-core-bl002-2026-05-16 | implementation | engineer | 2026-05-16 | Tier-1 Claude tool-use plan()/replan() returning OrchestratorResponse; GET / renders grounded baseline (mood + 6 role cards, Sand Hill anchors); 3-tier dispatch; graceful fixture fallback; spine clean. Commit 38f766f |
+| review-foundation-bl001-2026-05-16 | tests | code-quality | 2026-05-16 | PASS WITH TECH DEBT — model conformance, scope guard, zero-network replay, never-cut spine all confirmed clean; 1 MED + 3 LOW deferred |
+| foundation-runtime-bl001-2026-05-16 | implementation | engineer | 2026-05-16 | FastAPI app skeleton: 8 ADR-002 Pydantic models, raw-MD fixture loader, scope guard (frozenset allowlist, no live APIs), 3-tier backend selector, diff() spine works in replay; plan/replan/voice stubbed for BL-002. Commit b0317ae |
+| rosewood-property-dossier-research-2026-05-16 | analysis | analyst | 2026-05-16 | 3 property profiles (Sand Hill deep/8 anchors; Carlyle NY + Castiglion del Bosco provenance) + 3 cross-property guest dossiers; demo-grade Dossier A drives cyclist/wine/solo-decompressor 'they just knew' synthesis |
+| ADR-002-portfolio-guest-graph-2026-05-16 | architecture | architect | 2026-05-16 | Cycle-2 delta ADR: GuestProfile->GuestDossier + PropertyCard/GuestSynthesis; Markdown dossier/property fixtures + JSON replay; synthesis folded into plan()/replan() and EXCLUDED from PlanDiff (spine-safe); /select routes + /voice/transcribe reuse for staff-note shim (in-memory); canonical offline path = Ms.Chen@Sand Hill |
+| ADR-001-stack-selection-2026-05-16 | architecture | architect | 2026-05-16 | Stack ADR for full 7-FEAT/18-TREQ set: Python/FastAPI/Jinja2-HTMX, Pydantic v2 models, route table, 3-tier LLM resilience (Claude->Ollama->fixtures), offline mode, ruthless cut order (never cut TREQ-006) |
 
 _No completed work yet._
 
